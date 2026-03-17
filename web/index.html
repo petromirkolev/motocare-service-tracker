@@ -7,160 +7,285 @@
     <script type="module" src="/src/main.ts"></script>
   </head>
   <body>
-    <div id="app">
+    <div id="app" data-testid="app-root">
       <!-- AUTH VIEW -->
-      <main class="auth-view">
-        <section class="auth-shell auth-shell-split">
-          <div class="auth-hero auth-hero-left">
-            <div class="brand brand-large">
+      <main class="auth-view" data-testid="page-auth">
+        <section class="auth-shell auth-shell-split" data-testid="auth-shell">
+          <div class="auth-hero auth-hero-left" data-testid="auth-hero">
+            <div class="brand brand-large" data-testid="brand-auth">
               <img
                 src="./src/assets/logo.png"
                 alt="MotoCare Jobs logo"
-                class="brand-logo" />
+                class="brand-logo"
+                data-testid="logo-auth" />
               <div>
-                <h1>MotoCare Jobs</h1>
-                <p class="subtitle">Motorcycle service job tracker</p>
+                <h1 data-testid="title-auth">MotoCare Jobs</h1>
+                <p class="subtitle" data-testid="subtitle-auth">
+                  Motorcycle service job tracker
+                </p>
               </div>
             </div>
 
-            <div class="hero-copy">
-              <h2>
+            <div class="hero-copy" data-testid="auth-hero-copy">
+              <h2 data-testid="auth-hero-heading">
                 Track bikes. Create service jobs. Move work through a clean
                 workflow.
               </h2>
-              <p>
+              <p data-testid="auth-hero-text">
                 A small motorcycle workshop app focused on bikes, service job
                 tracking and status management for the modern motorcycle shop.
               </p>
             </div>
           </div>
 
-          <section class="auth-card-wrap auth-card-side">
-            <div class="auth-tabs">
-              <button type="button" class="auth-tab active">Login</button>
-              <button type="button" class="auth-tab">Register</button>
+          <section
+            class="auth-card-wrap auth-card-side"
+            data-testid="auth-card-wrap">
+            <div class="auth-tabs" data-testid="auth-tabs">
+              <button
+                type="button"
+                class="auth-tab active"
+                data-testid="tab-login"
+                data-action="show-login-form">
+                Login
+              </button>
+              <button
+                type="button"
+                class="auth-tab"
+                data-testid="tab-register"
+                data-action="show-register-form">
+                Register
+              </button>
             </div>
 
-            <form class="card form-card auth-card">
-              <h3>Login</h3>
+            <form class="card form-card auth-card" data-testid="form-login">
+              <h3 data-testid="heading-login">Login</h3>
 
-              <label>
+              <label for="login-email">
                 Email
-                <input type="email" placeholder="you@example.com" />
+                <input
+                  id="login-email"
+                  name="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  autocomplete="email"
+                  data-testid="input-login-email" />
               </label>
 
-              <label>
+              <label for="login-password">
                 Password
-                <input type="password" placeholder="Enter password" />
+                <input
+                  id="login-password"
+                  name="password"
+                  type="password"
+                  placeholder="Enter password"
+                  autocomplete="current-password"
+                  data-testid="input-login-password" />
               </label>
 
-              <button type="button">Login</button>
+              <div data-testid="message-login-error"></div>
+
+              <button type="button" data-testid="btn-login" data-action="login">
+                Login
+              </button>
             </form>
 
-            <form class="card form-card auth-card is-hidden">
-              <h3>Create account</h3>
+            <form
+              class="card form-card auth-card is-hidden"
+              data-testid="form-register">
+              <h3 data-testid="heading-register">Create account</h3>
 
-              <label>
+              <label for="register-email">
                 Email
-                <input type="email" placeholder="you@example.com" />
+                <input
+                  id="register-email"
+                  name="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  autocomplete="email"
+                  data-testid="input-register-email" />
               </label>
 
-              <label>
+              <label for="register-password">
                 Password
-                <input type="password" placeholder="Create password" />
+                <input
+                  id="register-password"
+                  name="password"
+                  type="password"
+                  placeholder="Create password"
+                  autocomplete="new-password"
+                  data-testid="input-register-password" />
               </label>
 
-              <label>
+              <label for="register-confirm-password">
                 Confirm password
-                <input type="password" placeholder="Repeat password" />
+                <input
+                  id="register-confirm-password"
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Repeat password"
+                  autocomplete="new-password"
+                  data-testid="input-register-confirm-password" />
               </label>
 
-              <button type="button">Create account</button>
+              <div data-testid="message-register-error"></div>
+
+              <button
+                type="button"
+                data-testid="btn-register"
+                data-action="register">
+                Create account
+              </button>
             </form>
           </section>
         </section>
       </main>
 
       <!-- APP VIEW: BIKES PAGE -->
-      <div class="app-view is-hidden">
-        <header class="topbar">
-          <div class="brand">
-            <div class="brand-mark">MC</div>
+      <div class="app-view is-hidden" data-testid="page-bikes">
+        <header class="topbar" data-testid="topbar-bikes">
+          <div class="brand" data-testid="brand-bikes">
+            <div class="brand-mark" data-testid="brand-mark-bikes">MC</div>
             <div>
-              <h1>MotoCare Jobs</h1>
-              <p class="subtitle">Motorcycle service job tracker</p>
+              <h1 data-testid="title-bikes">MotoCare Jobs</h1>
+              <p class="subtitle" data-testid="subtitle-bikes">
+                Motorcycle service job tracker
+              </p>
             </div>
           </div>
 
-          <nav class="topnav">
-            <a href="#" class="nav-link active">Bikes</a>
-            <a href="#" class="nav-link">Jobs</a>
+          <nav class="topnav" data-testid="nav-main-bikes">
+            <a
+              href="#"
+              class="nav-link active"
+              data-testid="nav-bikes"
+              data-action="go-bikes">
+              Bikes
+            </a>
+            <a
+              href="#"
+              class="nav-link"
+              data-testid="nav-jobs"
+              data-action="go-jobs">
+              Jobs
+            </a>
           </nav>
 
-          <div class="topbar-actions">
-            <span class="muted">petromir@example.com</span>
-            <button type="button" class="ghost">Logout</button>
+          <div class="topbar-actions" data-testid="topbar-actions-bikes">
+            <span class="muted" data-testid="text-current-user-bikes">
+              petromir@example.com
+            </span>
+            <button
+              type="button"
+              class="ghost"
+              data-testid="btn-logout-bikes"
+              data-action="logout">
+              Logout
+            </button>
           </div>
         </header>
 
-        <main class="page-shell">
-          <section class="panel">
-            <div class="panel-header">
-              <h2>Bikes</h2>
-              <p>
+        <main class="page-shell" data-testid="shell-bikes">
+          <section class="panel" data-testid="panel-bikes">
+            <div class="panel-header" data-testid="header-bikes">
+              <h2 data-testid="heading-bikes">Bikes</h2>
+              <p data-testid="text-bikes-description">
                 Add motorcycles and manage the list owned by the current user
               </p>
             </div>
 
-            <div class="content-grid">
-              <form class="card form-card narrow">
-                <h3>Add bike</h3>
+            <div class="content-grid" data-testid="content-bikes">
+              <form class="card form-card narrow" data-testid="form-add-bike">
+                <h3 data-testid="heading-add-bike">Add bike</h3>
 
-                <label>
+                <label for="bike-make">
                   Make
-                  <input type="text" placeholder="Yamaha" />
+                  <input
+                    id="bike-make"
+                    name="make"
+                    type="text"
+                    placeholder="Yamaha"
+                    data-testid="input-bike-make" />
                 </label>
 
-                <label>
+                <label for="bike-model">
                   Model
-                  <input type="text" placeholder="Tracer 9 GT" />
+                  <input
+                    id="bike-model"
+                    name="model"
+                    type="text"
+                    placeholder="Tracer 9 GT"
+                    data-testid="input-bike-model" />
                 </label>
 
-                <label>
+                <label for="bike-year">
                   Year
-                  <input type="number" placeholder="2021" />
+                  <input
+                    id="bike-year"
+                    name="year"
+                    type="number"
+                    placeholder="2021"
+                    data-testid="input-bike-year" />
                 </label>
 
-                <label>
+                <label for="bike-nickname">
                   Nickname
-                  <input type="text" placeholder="Blue beast" />
+                  <input
+                    id="bike-nickname"
+                    name="nickname"
+                    type="text"
+                    placeholder="Blue beast"
+                    data-testid="input-bike-nickname" />
                 </label>
 
-                <button type="button">Save bike</button>
+                <div data-testid="message-bike-error"></div>
+
+                <button
+                  type="button"
+                  data-testid="btn-save-bike"
+                  data-action="save-bike">
+                  Save bike
+                </button>
               </form>
 
-              <div class="stack">
-                <div class="section-row">
-                  <h3>Your bikes</h3>
-                  <span class="muted">2 bikes</span>
+              <div class="stack" data-testid="section-bikes-list">
+                <div class="section-row" data-testid="bikes-list-header">
+                  <h3 data-testid="heading-your-bikes">Your bikes</h3>
+                  <span class="muted" data-testid="text-bike-count"
+                    >2 bikes</span
+                  >
                 </div>
 
-                <div class="bike-list">
-                  <article class="card bike-card">
+                <div class="bike-list" data-testid="list-bikes">
+                  <article
+                    class="card bike-card"
+                    data-testid="card-bike"
+                    data-bike-id="bike-1">
                     <div>
-                      <h4>Yamaha Tracer 9 GT</h4>
-                      <p class="muted">2021 • Blue beast</p>
+                      <h4 data-testid="text-bike-name">Yamaha Tracer 9 GT</h4>
+                      <p class="muted" data-testid="text-bike-meta">
+                        2021 • Blue beast
+                      </p>
                     </div>
-                    <span class="tag">Ready</span>
+                    <span class="tag" data-testid="tag-bike-ready">Ready</span>
                   </article>
 
-                  <article class="card bike-card">
+                  <article
+                    class="card bike-card"
+                    data-testid="card-bike"
+                    data-bike-id="bike-2">
                     <div>
-                      <h4>Honda Hornet 600</h4>
-                      <p class="muted">2005 • Naked project</p>
+                      <h4 data-testid="text-bike-name">Honda Hornet 600</h4>
+                      <p class="muted" data-testid="text-bike-meta">
+                        2005 • Naked project
+                      </p>
                     </div>
-                    <span class="tag">Ready</span>
+                    <span class="tag" data-testid="tag-bike-ready">Ready</span>
                   </article>
+                </div>
+
+                <div class="is-hidden" data-testid="empty-bikes">
+                  No bikes added yet.
                 </div>
               </div>
             </div>
@@ -169,138 +294,273 @@
       </div>
 
       <!-- APP VIEW: JOBS PAGE -->
-      <div class="app-view is-hidden">
-        <header class="topbar">
-          <div class="brand">
-            <div class="brand-mark">MC</div>
+      <div class="app-view is-hidden" data-testid="page-jobs">
+        <header class="topbar" data-testid="topbar-jobs">
+          <div class="brand" data-testid="brand-jobs">
+            <div class="brand-mark" data-testid="brand-mark-jobs">MC</div>
             <div>
-              <h1>MotoCare Jobs</h1>
-              <p class="subtitle">Motorcycle service job tracker</p>
+              <h1 data-testid="title-jobs">MotoCare Jobs</h1>
+              <p class="subtitle" data-testid="subtitle-jobs">
+                Motorcycle service job tracker
+              </p>
             </div>
           </div>
 
-          <nav class="topnav">
-            <a href="#" class="nav-link">Bikes</a>
-            <a href="#" class="nav-link active">Jobs</a>
+          <nav class="topnav" data-testid="nav-main-jobs">
+            <a
+              href="#"
+              class="nav-link"
+              data-testid="nav-bikes"
+              data-action="go-bikes">
+              Bikes
+            </a>
+            <a
+              href="#"
+              class="nav-link active"
+              data-testid="nav-jobs"
+              data-action="go-jobs">
+              Jobs
+            </a>
           </nav>
 
-          <div class="topbar-actions">
-            <span class="muted">petromir@example.com</span>
-            <button type="button" class="ghost">Logout</button>
+          <div class="topbar-actions" data-testid="topbar-actions-jobs">
+            <span class="muted" data-testid="text-current-user-jobs">
+              petromir@example.com
+            </span>
+            <button
+              type="button"
+              class="ghost"
+              data-testid="btn-logout-jobs"
+              data-action="logout">
+              Logout
+            </button>
           </div>
         </header>
 
-        <main class="page-shell">
-          <section class="panel">
-            <div class="panel-header">
-              <h2>Service jobs</h2>
-              <p>
+        <main class="page-shell" data-testid="shell-jobs">
+          <section class="panel" data-testid="panel-jobs">
+            <div class="panel-header" data-testid="header-jobs">
+              <h2 data-testid="heading-jobs">Service jobs</h2>
+              <p data-testid="text-jobs-description">
                 Create jobs, filter them by status, and move them through the
                 workflow
               </p>
             </div>
 
-            <div class="content-grid">
-              <form class="card form-card narrow">
-                <h3>Create job</h3>
+            <div class="content-grid" data-testid="content-jobs">
+              <form class="card form-card narrow" data-testid="form-create-job">
+                <h3 data-testid="heading-create-job">Create job</h3>
 
-                <label>
+                <label for="job-bike">
                   Bike
-                  <select>
-                    <option>Yamaha Tracer 9 GT</option>
-                    <option>Honda Hornet 600</option>
+                  <select
+                    id="job-bike"
+                    name="bikeId"
+                    data-testid="select-job-bike">
+                    <option value="bike-1">Yamaha Tracer 9 GT</option>
+                    <option value="bike-2">Honda Hornet 600</option>
                   </select>
                 </label>
 
-                <label>
+                <label for="job-service-type">
                   Service type
-                  <select>
-                    <option>Oil Change</option>
-                    <option>Chain Service</option>
-                    <option>Brake Check</option>
-                    <option>Tire Change</option>
-                    <option>General Inspection</option>
+                  <select
+                    id="job-service-type"
+                    name="serviceType"
+                    data-testid="select-job-service-type">
+                    <option value="Oil Change">Oil Change</option>
+                    <option value="Chain Service">Chain Service</option>
+                    <option value="Brake Check">Brake Check</option>
+                    <option value="Tire Change">Tire Change</option>
+                    <option value="General Inspection">
+                      General Inspection
+                    </option>
                   </select>
                 </label>
 
-                <label>
+                <label for="job-odometer">
                   Odometer
-                  <input type="number" placeholder="24500" />
+                  <input
+                    id="job-odometer"
+                    name="odometer"
+                    type="number"
+                    placeholder="24500"
+                    data-testid="input-job-odometer" />
                 </label>
 
-                <label>
+                <label for="job-note">
                   Note
                   <textarea
+                    id="job-note"
+                    name="note"
                     rows="4"
-                    placeholder="Describe the issue or requested service"></textarea>
+                    placeholder="Describe the issue or requested service"
+                    data-testid="textarea-job-note"></textarea>
                 </label>
 
-                <button type="button">Create job</button>
+                <div data-testid="message-job-error"></div>
+
+                <button
+                  type="button"
+                  data-testid="btn-create-job"
+                  data-action="create-job">
+                  Create job
+                </button>
               </form>
 
-              <div class="stack">
-                <div class="card toolbar">
-                  <div class="filter-group">
-                    <button class="filter active" type="button">All</button>
-                    <button class="filter" type="button">Requested</button>
-                    <button class="filter" type="button">Approved</button>
-                    <button class="filter" type="button">In Progress</button>
-                    <button class="filter" type="button">Done</button>
-                    <button class="filter" type="button">Cancelled</button>
+              <div class="stack" data-testid="section-jobs-list">
+                <div class="card toolbar" data-testid="toolbar-jobs-filters">
+                  <div class="filter-group" data-testid="group-job-filters">
+                    <button
+                      class="filter active"
+                      type="button"
+                      data-testid="filter-jobs-all"
+                      data-action="filter-jobs-all">
+                      All
+                    </button>
+                    <button
+                      class="filter"
+                      type="button"
+                      data-testid="filter-jobs-requested"
+                      data-action="filter-jobs-requested">
+                      Requested
+                    </button>
+                    <button
+                      class="filter"
+                      type="button"
+                      data-testid="filter-jobs-approved"
+                      data-action="filter-jobs-approved">
+                      Approved
+                    </button>
+                    <button
+                      class="filter"
+                      type="button"
+                      data-testid="filter-jobs-in-progress"
+                      data-action="filter-jobs-in-progress">
+                      In Progress
+                    </button>
+                    <button
+                      class="filter"
+                      type="button"
+                      data-testid="filter-jobs-done"
+                      data-action="filter-jobs-done">
+                      Done
+                    </button>
+                    <button
+                      class="filter"
+                      type="button"
+                      data-testid="filter-jobs-cancelled"
+                      data-action="filter-jobs-cancelled">
+                      Cancelled
+                    </button>
                   </div>
                 </div>
 
-                <div class="job-list">
-                  <article class="card job-card">
-                    <div class="job-top">
+                <div class="job-list" data-testid="list-jobs">
+                  <article
+                    class="card job-card"
+                    data-testid="card-job"
+                    data-job-id="job-1">
+                    <div class="job-top" data-testid="job-top">
                       <div>
-                        <h4>Oil Change</h4>
-                        <p class="muted">Yamaha Tracer 9 GT • 24,500 km</p>
+                        <h4 data-testid="text-job-service-type">Oil Change</h4>
+                        <p class="muted" data-testid="text-job-meta">
+                          Yamaha Tracer 9 GT • 24,500 km
+                        </p>
                       </div>
-                      <span class="status requested">Requested</span>
+                      <span
+                        class="status requested"
+                        data-testid="status-job"
+                        data-status="requested">
+                        Requested
+                      </span>
                     </div>
 
-                    <p class="job-note">
+                    <p class="job-note" data-testid="text-job-note">
                       Basic oil and filter replacement before the next trip.
                     </p>
 
-                    <div class="job-actions">
-                      <button type="button" class="ghost">Approve</button>
-                      <button type="button" class="ghost danger">Cancel</button>
+                    <div class="job-actions" data-testid="actions-job">
+                      <button
+                        type="button"
+                        class="ghost"
+                        data-testid="btn-job-approve"
+                        data-action="approve-job">
+                        Approve
+                      </button>
+                      <button
+                        type="button"
+                        class="ghost danger"
+                        data-testid="btn-job-cancel"
+                        data-action="cancel-job">
+                        Cancel
+                      </button>
                     </div>
                   </article>
 
-                  <article class="card job-card">
-                    <div class="job-top">
+                  <article
+                    class="card job-card"
+                    data-testid="card-job"
+                    data-job-id="job-2">
+                    <div class="job-top" data-testid="job-top">
                       <div>
-                        <h4>Brake Check</h4>
-                        <p class="muted">Honda Hornet 600 • 41,200 km</p>
+                        <h4 data-testid="text-job-service-type">Brake Check</h4>
+                        <p class="muted" data-testid="text-job-meta">
+                          Honda Hornet 600 • 41,200 km
+                        </p>
                       </div>
-                      <span class="status in-progress">In Progress</span>
+                      <span
+                        class="status in-progress"
+                        data-testid="status-job"
+                        data-status="in_progress">
+                        In Progress
+                      </span>
                     </div>
 
-                    <p class="job-note">
+                    <p class="job-note" data-testid="text-job-note">
                       Front brake inspection and fluid check.
                     </p>
 
-                    <div class="job-actions">
-                      <button type="button" class="ghost">Mark done</button>
+                    <div class="job-actions" data-testid="actions-job">
+                      <button
+                        type="button"
+                        class="ghost"
+                        data-testid="btn-job-mark-done"
+                        data-action="mark-job-done">
+                        Mark done
+                      </button>
                     </div>
                   </article>
 
-                  <article class="card job-card">
-                    <div class="job-top">
+                  <article
+                    class="card job-card"
+                    data-testid="card-job"
+                    data-job-id="job-3">
+                    <div class="job-top" data-testid="job-top">
                       <div>
-                        <h4>Chain Service</h4>
-                        <p class="muted">Yamaha Tracer 9 GT • 23,900 km</p>
+                        <h4 data-testid="text-job-service-type">
+                          Chain Service
+                        </h4>
+                        <p class="muted" data-testid="text-job-meta">
+                          Yamaha Tracer 9 GT • 23,900 km
+                        </p>
                       </div>
-                      <span class="status done">Done</span>
+                      <span
+                        class="status done"
+                        data-testid="status-job"
+                        data-status="done">
+                        Done
+                      </span>
                     </div>
 
-                    <p class="job-note">
+                    <p class="job-note" data-testid="text-job-note">
                       Cleaned, lubed, and adjusted chain tension.
                     </p>
                   </article>
+                </div>
+
+                <div class="is-hidden" data-testid="empty-jobs">
+                  No service jobs yet.
                 </div>
               </div>
             </div>
