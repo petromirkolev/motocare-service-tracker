@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MotoCare Jobs</title>
+    <script type="module" src="/src/main.ts"></script>
+  </head>
+  <body>
+    <div id="app">
+      <!-- AUTH VIEW -->
+      <main class="auth-view">
+        <section class="auth-shell auth-shell-split">
+          <div class="auth-hero auth-hero-left">
+            <div class="brand brand-large">
+              <img
+                src="./src/assets/logo.png"
+                alt="MotoCare Jobs logo"
+                class="brand-logo" />
+              <div>
+                <h1>MotoCare Jobs</h1>
+                <p class="subtitle">Motorcycle service job tracker</p>
+              </div>
+            </div>
+
+            <div class="hero-copy">
+              <h2>
+                Track bikes. Create service jobs. Move work through a clean
+                workflow.
+              </h2>
+              <p>
+                A small motorcycle workshop app focused on bikes, service job
+                tracking and status management for the modern motorcycle shop.
+              </p>
+            </div>
+          </div>
+
+          <section class="auth-card-wrap auth-card-side">
+            <div class="auth-tabs">
+              <button type="button" class="auth-tab active">Login</button>
+              <button type="button" class="auth-tab">Register</button>
+            </div>
+
+            <form class="card form-card auth-card">
+              <h3>Login</h3>
+
+              <label>
+                Email
+                <input type="email" placeholder="you@example.com" />
+              </label>
+
+              <label>
+                Password
+                <input type="password" placeholder="Enter password" />
+              </label>
+
+              <button type="button">Login</button>
+            </form>
+
+            <form class="card form-card auth-card is-hidden">
+              <h3>Create account</h3>
+
+              <label>
+                Email
+                <input type="email" placeholder="you@example.com" />
+              </label>
+
+              <label>
+                Password
+                <input type="password" placeholder="Create password" />
+              </label>
+
+              <label>
+                Confirm password
+                <input type="password" placeholder="Repeat password" />
+              </label>
+
+              <button type="button">Create account</button>
+            </form>
+          </section>
+        </section>
+      </main>
+
+      <!-- APP VIEW: BIKES PAGE -->
+      <div class="app-view is-hidden">
+        <header class="topbar">
+          <div class="brand">
+            <div class="brand-mark">MC</div>
+            <div>
+              <h1>MotoCare Jobs</h1>
+              <p class="subtitle">Motorcycle service job tracker</p>
+            </div>
+          </div>
+
+          <nav class="topnav">
+            <a href="#" class="nav-link active">Bikes</a>
+            <a href="#" class="nav-link">Jobs</a>
+          </nav>
+
+          <div class="topbar-actions">
+            <span class="muted">petromir@example.com</span>
+            <button type="button" class="ghost">Logout</button>
+          </div>
+        </header>
+
+        <main class="page-shell">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Bikes</h2>
+              <p>
+                Add motorcycles and manage the list owned by the current user
+              </p>
+            </div>
+
+            <div class="content-grid">
+              <form class="card form-card narrow">
+                <h3>Add bike</h3>
+
+                <label>
+                  Make
+                  <input type="text" placeholder="Yamaha" />
+                </label>
+
+                <label>
+                  Model
+                  <input type="text" placeholder="Tracer 9 GT" />
+                </label>
+
+                <label>
+                  Year
+                  <input type="number" placeholder="2021" />
+                </label>
+
+                <label>
+                  Nickname
+                  <input type="text" placeholder="Blue beast" />
+                </label>
+
+                <button type="button">Save bike</button>
+              </form>
+
+              <div class="stack">
+                <div class="section-row">
+                  <h3>Your bikes</h3>
+                  <span class="muted">2 bikes</span>
+                </div>
+
+                <div class="bike-list">
+                  <article class="card bike-card">
+                    <div>
+                      <h4>Yamaha Tracer 9 GT</h4>
+                      <p class="muted">2021 • Blue beast</p>
+                    </div>
+                    <span class="tag">Ready</span>
+                  </article>
+
+                  <article class="card bike-card">
+                    <div>
+                      <h4>Honda Hornet 600</h4>
+                      <p class="muted">2005 • Naked project</p>
+                    </div>
+                    <span class="tag">Ready</span>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <!-- APP VIEW: JOBS PAGE -->
+      <div class="app-view is-hidden">
+        <header class="topbar">
+          <div class="brand">
+            <div class="brand-mark">MC</div>
+            <div>
+              <h1>MotoCare Jobs</h1>
+              <p class="subtitle">Motorcycle service job tracker</p>
+            </div>
+          </div>
+
+          <nav class="topnav">
+            <a href="#" class="nav-link">Bikes</a>
+            <a href="#" class="nav-link active">Jobs</a>
+          </nav>
+
+          <div class="topbar-actions">
+            <span class="muted">petromir@example.com</span>
+            <button type="button" class="ghost">Logout</button>
+          </div>
+        </header>
+
+        <main class="page-shell">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Service jobs</h2>
+              <p>
+                Create jobs, filter them by status, and move them through the
+                workflow
+              </p>
+            </div>
+
+            <div class="content-grid">
+              <form class="card form-card narrow">
+                <h3>Create job</h3>
+
+                <label>
+                  Bike
+                  <select>
+                    <option>Yamaha Tracer 9 GT</option>
+                    <option>Honda Hornet 600</option>
+                  </select>
+                </label>
+
+                <label>
+                  Service type
+                  <select>
+                    <option>Oil Change</option>
+                    <option>Chain Service</option>
+                    <option>Brake Check</option>
+                    <option>Tire Change</option>
+                    <option>General Inspection</option>
+                  </select>
+                </label>
+
+                <label>
+                  Odometer
+                  <input type="number" placeholder="24500" />
+                </label>
+
+                <label>
+                  Note
+                  <textarea
+                    rows="4"
+                    placeholder="Describe the issue or requested service"></textarea>
+                </label>
+
+                <button type="button">Create job</button>
+              </form>
+
+              <div class="stack">
+                <div class="card toolbar">
+                  <div class="filter-group">
+                    <button class="filter active" type="button">All</button>
+                    <button class="filter" type="button">Requested</button>
+                    <button class="filter" type="button">Approved</button>
+                    <button class="filter" type="button">In Progress</button>
+                    <button class="filter" type="button">Done</button>
+                    <button class="filter" type="button">Cancelled</button>
+                  </div>
+                </div>
+
+                <div class="job-list">
+                  <article class="card job-card">
+                    <div class="job-top">
+                      <div>
+                        <h4>Oil Change</h4>
+                        <p class="muted">Yamaha Tracer 9 GT • 24,500 km</p>
+                      </div>
+                      <span class="status requested">Requested</span>
+                    </div>
+
+                    <p class="job-note">
+                      Basic oil and filter replacement before the next trip.
+                    </p>
+
+                    <div class="job-actions">
+                      <button type="button" class="ghost">Approve</button>
+                      <button type="button" class="ghost danger">Cancel</button>
+                    </div>
+                  </article>
+
+                  <article class="card job-card">
+                    <div class="job-top">
+                      <div>
+                        <h4>Brake Check</h4>
+                        <p class="muted">Honda Hornet 600 • 41,200 km</p>
+                      </div>
+                      <span class="status in-progress">In Progress</span>
+                    </div>
+
+                    <p class="job-note">
+                      Front brake inspection and fluid check.
+                    </p>
+
+                    <div class="job-actions">
+                      <button type="button" class="ghost">Mark done</button>
+                    </div>
+                  </article>
+
+                  <article class="card job-card">
+                    <div class="job-top">
+                      <div>
+                        <h4>Chain Service</h4>
+                        <p class="muted">Yamaha Tracer 9 GT • 23,900 km</p>
+                      </div>
+                      <span class="status done">Done</span>
+                    </div>
+
+                    <p class="job-note">
+                      Cleaned, lubed, and adjusted chain tension.
+                    </p>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
