@@ -81,11 +81,11 @@ npm run dev
 
 ### Allowed transitions:
 
-- requested → approved
-- requested → cancelled
-- approved → in_progress
-- approved → cancelled
-- in_progress → done
+- requested > approved
+- requested > cancelled
+- approved > in_progress
+- approved > cancelled
+- in_progress > done
 
 ## Notes
 
