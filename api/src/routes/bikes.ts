@@ -32,7 +32,7 @@ bikes_router.post('/', async (req, res) => {
   const user_id = normalizeString(body.user_id);
   const make = normalizeString(body.make);
   const model = normalizeString(body.model);
-  const year = body.year;
+  const year = body.year || undefined;
 
   const user_bikes = await listBikesByUserId(user_id);
 
@@ -45,10 +45,23 @@ bikes_router.post('/', async (req, res) => {
     return;
   }
 
-  if (!user_id || !make || !model || year === undefined) {
-    res
-      .status(400)
-      .json({ error: 'user_id, make, model, year, and odo are required' });
+  if (!user_id) {
+    res.status(400).json({ error: 'user_id is required' });
+    return;
+  }
+
+  if (!make) {
+    res.status(400).json({ error: 'Make is required' });
+    return;
+  }
+
+  if (!model) {
+    res.status(400).json({ error: 'Model is required' });
+    return;
+  }
+
+  if (year === undefined) {
+    res.status(400).json({ error: 'Year is required' });
     return;
   }
 
@@ -60,14 +73,19 @@ bikes_router.post('/', async (req, res) => {
   }
 
   try {
-    await createBike({
+    const bike_id = await createBike({
       user_id,
       make,
       model,
       year,
     });
 
-    res.status(201).json({ message: 'Bike created successfully' });
+    res.status(201).json({
+      message: 'Bike created successfully',
+      bike: {
+        id: bike_id,
+      },
+    });
   } catch (error) {
     console.error('Create bike failed:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -76,7 +94,7 @@ bikes_router.post('/', async (req, res) => {
 
 bikes_router.delete('/:id', async (req, res) => {
   const bike_id = req.params.id;
-  const user_id = String(req.query.userId ?? '').trim();
+  const user_id = String(req.query.user_id ?? '').trim();
 
   if (!bike_id || !user_id) {
     res.status(400).json({ error: 'bike_id and user_id are required' });

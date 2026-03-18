@@ -7,14 +7,16 @@ export async function createBike(params: {
   make: string;
   model: string;
   year: number;
-}): Promise<void> {
+}): Promise<string> {
+  const id = uuidv4();
+
   await runQuery(
     `
       INSERT INTO bikes (id, user_id, make, model, year, created_at)
       VALUES (?, ?, ?, ?, ?, ?)
     `,
     [
-      uuidv4(),
+      id,
       params.user_id,
       params.make,
       params.model,
@@ -22,6 +24,7 @@ export async function createBike(params: {
       new Date().toISOString(),
     ],
   );
+  return id;
 }
 
 export async function findBikeById(id: string): Promise<BikeRow | undefined> {
