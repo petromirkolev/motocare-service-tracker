@@ -41,6 +41,21 @@ export async function listJobsByUserId(user_id: string): Promise<JobRow[]> {
   );
 }
 
+export async function updateJobStatus(params: {
+  id: string;
+  user_id: string;
+  status: string;
+}): Promise<void> {
+  await runQuery(
+    `
+      UPDATE jobs
+      SET status = ?, updated_at = ?
+      WHERE id = ? AND user_id = ?
+    `,
+    [params.status, new Date().toISOString(), params.id, params.user_id],
+  );
+}
+
 export async function deleteJob(params: {
   id: string;
   user_id: string;

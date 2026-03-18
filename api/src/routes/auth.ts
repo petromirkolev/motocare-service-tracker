@@ -18,9 +18,9 @@ import { sendLoginSuccess, sendRegisterSuccess } from '../utils/auth-success';
 import { getValidatedAuthBody } from '../utils/auth-validation';
 import { normalizeEmail, isValidEmail } from '../utils/validation';
 
-const authRouter = Router();
+const auth_router = Router();
 
-authRouter.post('/register', async (req, res) => {
+auth_router.post('/register', async (req, res) => {
   const validatedBody = getValidatedAuthBody((req.body ?? {}) as AuthBody);
 
   if (!validatedBody) {
@@ -62,7 +62,7 @@ authRouter.post('/register', async (req, res) => {
   }
 });
 
-authRouter.post('/login', async (req, res) => {
+auth_router.post('/login', async (req, res) => {
   const validatedBody = getValidatedAuthBody((req.body ?? {}) as AuthBody);
 
   if (!validatedBody) {
@@ -101,4 +101,4 @@ authRouter.post('/login', async (req, res) => {
   }
 });
 
-export default authRouter;
+export default auth_router;

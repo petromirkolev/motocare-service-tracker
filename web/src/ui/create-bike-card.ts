@@ -1,5 +1,3 @@
-/* This file contains the createBikeCard function, which generates an HTML element representing a bike card in the UI. The card includes the bike's name, meta information, odometer reading, and action buttons for editing and deleting the bike. */
-
 import type { Bike } from '../types/bikes';
 
 export function createBikeCard(bike: Bike): HTMLElement {

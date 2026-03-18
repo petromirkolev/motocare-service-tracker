@@ -1,5 +1,3 @@
-/* This file contains functions for managing jobs, including fetching, creating, updating, and deleting jobs. */
-
 import { getCurrentUser } from '../state/auth-store';
 import { API_BASE_URL } from './base';
 import type { CreateJobResponse, ErrorResponse } from '../types/job';
@@ -11,7 +9,7 @@ export async function createJobApi(input: {
   note: string;
 }): Promise<CreateJobResponse> {
   const currentUser = getCurrentUser();
-  if (!currentUser) throw new Error('No logged-in user');
+  if (!currentUser) throw new Error('You must be logged in');
 
   const response = await fetch(
     `${API_BASE_URL}/jobs?user_id=${encodeURIComponent(currentUser.id)}`,
@@ -47,4 +45,31 @@ export async function getJobsApi(userId: string) {
   }
 
   return data.jobs;
+}
+
+export async function updateJobStatusApi(jobId: string, status: string) {
+  const currentUser = getCurrentUser();
+
+  if (!currentUser) {
+    throw new Error('You must be logged in');
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/jobs/${jobId}/status?user_id=${currentUser.id}`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ status }),
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || 'Failed to update job status');
+  }
+
+  return data.job;
 }

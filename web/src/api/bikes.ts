@@ -1,5 +1,3 @@
-/* This file contains functions for managing bikes, including fetching, creating, updating, and deleting bikes. */
-
 import { API_BASE_URL } from './base';
 import { getCurrentUser } from '../state/auth-store';
 import { bikeStore } from '../state/bike-store';
@@ -14,7 +12,7 @@ export async function getBikesApi(): Promise<Bike[]> {
   const currentUser = getCurrentUser();
 
   if (!currentUser) {
-    throw new Error('No logged-in user');
+    throw new Error('You must be logged in');
   }
 
   const response = await fetch(
@@ -37,7 +35,7 @@ export async function createBikeApi(input: {
 }): Promise<CreateBikeResponse> {
   const currentUser = getCurrentUser();
 
-  if (!currentUser) throw new Error('No logged-in user');
+  if (!currentUser) throw new Error('You must be logged in');
 
   if (input.year !== undefined && (input.year < 1900 || input.year > 2100))
     throw new Error('Invalid year');
@@ -72,7 +70,7 @@ export async function updateBikeApi(input: {
 }): Promise<{ message: string }> {
   const currentUser = getCurrentUser();
   if (!currentUser) {
-    throw new Error('No logged-in user');
+    throw new Error('You must be logged in');
   }
 
   const currentBike = bikeStore.getBike(input.id);
@@ -111,7 +109,7 @@ export async function deleteBikeApi(id: string): Promise<{ message: string }> {
   const currentUser = getCurrentUser();
 
   if (!currentUser) {
-    throw new Error('No logged-in user');
+    throw new Error('You must be logged in');
   }
 
   const response = await fetch(

@@ -1,11 +1,16 @@
 import { Router } from 'express';
-import { createJob, listJobsByUserId } from '../services/job-service';
-import { CreateJobBody } from '../types/job';
+import {
+  createJob,
+  listJobsByUserId,
+  findJobById,
+  updateJobStatus,
+} from '../services/job-service';
+import { CreateJobBody, JobRow } from '../types/job';
 import { normalizeString } from '../utils/validation';
 
-const jobsRouter = Router();
+const jobs_router = Router();
 
-jobsRouter.get('/', async (req, res) => {
+jobs_router.get('/', async (req, res) => {
   const user_id = String(req.query.user_id ?? '').trim();
 
   if (!user_id) {
@@ -22,7 +27,7 @@ jobsRouter.get('/', async (req, res) => {
   }
 });
 
-jobsRouter.post('/', async (req, res) => {
+jobs_router.post('/', async (req, res) => {
   const user_id = String(req.query.user_id ?? '').trim();
 
   if (!user_id) {
@@ -64,4 +69,79 @@ jobsRouter.post('/', async (req, res) => {
   }
 });
 
-export default jobsRouter;
+jobs_router.patch('/:id/status', async (req, res) => {
+  const id = String(req.params.id ?? '').trim();
+  const user_id = String(req.query.user_id ?? '').trim();
+  const status = String(req.body?.status ?? '').trim();
+
+  if (!id) {
+    res.status(400).json({ error: 'id query param is required' });
+    return;
+  }
+
+  if (!user_id) {
+    res.status(400).json({ error: 'user_id query param is required' });
+    return;
+  }
+
+  if (!status) {
+    res.status(400).json({ error: 'status is required' });
+    return;
+  }
+
+  try {
+    const job = await findJobById(id);
+
+    if (!job) {
+      res.status(404).json({ error: 'Job not found' });
+      return;
+    }
+
+    if (job.user_id !== user_id) {
+      res.status(403).json({ error: 'Forbidden' });
+      return;
+    }
+
+    const allowedStatuses = ['approved', 'in_progress', 'done', 'cancelled'];
+
+    if (!allowedStatuses.includes(status)) {
+      res.status(400).json({ error: 'Invalid status value' });
+      return;
+    }
+
+    const allowedTransitions: Record<string, string[]> = {
+      requested: ['approved', 'cancelled'],
+      approved: ['in_progress', 'cancelled'],
+      in_progress: ['done'],
+      done: [],
+      cancelled: [],
+    };
+
+    const nextAllowedStatuses = allowedTransitions[job.status] ?? [];
+
+    if (!nextAllowedStatuses.includes(status)) {
+      res.status(400).json({
+        error: `Invalid status transition from ${job.status} to ${status}`,
+      });
+      return;
+    }
+
+    await updateJobStatus({
+      id,
+      user_id,
+      status,
+    });
+
+    const updatedJob = await findJobById(id);
+
+    res.json({
+      message: 'Job status updated successfully',
+      job: updatedJob,
+    });
+  } catch (error) {
+    console.error('Update job status failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+export default jobs_router;

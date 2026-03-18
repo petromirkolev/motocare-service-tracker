@@ -1,5 +1,3 @@
-/* This file contains the createJobCard function, which generates an HTML element representing a job card in the UI. */
-
 import type { Job } from '../types/job';
 
 export function createJobCard(job: Job, bikeLabel: string): HTMLElement {
@@ -18,6 +16,8 @@ export function createJobCard(job: Job, bikeLabel: string): HTMLElement {
     </div>
 
     <p class="job-note" data-testid="text-job-note"></p>
+
+    <div class="job-actions" data-testid="actions-job"></div>
   `;
 
   const serviceTypeEl = article.querySelector(
@@ -36,7 +36,11 @@ export function createJobCard(job: Job, bikeLabel: string): HTMLElement {
     '[data-testid="text-job-note"]',
   ) as HTMLElement | null;
 
-  if (!serviceTypeEl || !metaEl || !statusEl || !noteEl) {
+  const actionsEl = article.querySelector(
+    '[data-testid="actions-job"]',
+  ) as HTMLElement | null;
+
+  if (!serviceTypeEl || !metaEl || !statusEl || !noteEl || !actionsEl) {
     throw new Error('Job card template missing expected elements');
   }
 
@@ -45,6 +49,8 @@ export function createJobCard(job: Job, bikeLabel: string): HTMLElement {
   statusEl.textContent = formatJobStatus(job.status);
   statusEl.classList.add(job.status.replace('_', '-'));
   noteEl.textContent = job.note || 'No note';
+
+  renderJobActions(actionsEl, job.status);
 
   return article;
 }
@@ -64,4 +70,73 @@ function formatJobStatus(status: string): string {
     default:
       return status;
   }
+}
+
+function renderJobActions(container: HTMLElement, status: string): void {
+  switch (status) {
+    case 'requested':
+      container.appendChild(
+        createActionButton(
+          'Approve',
+          'approve-job',
+          'btn-job-approve',
+          'ghost',
+        ),
+      );
+      container.appendChild(
+        createActionButton(
+          'Cancel',
+          'cancel-job',
+          'btn-job-cancel',
+          'ghost danger',
+        ),
+      );
+      break;
+
+    case 'approved':
+      container.appendChild(
+        createActionButton('Start', 'start-job', 'btn-job-start', 'ghost'),
+      );
+      container.appendChild(
+        createActionButton(
+          'Cancel',
+          'cancel-job',
+          'btn-job-cancel',
+          'ghost danger',
+        ),
+      );
+      break;
+
+    case 'in_progress':
+      container.appendChild(
+        createActionButton(
+          'Mark done',
+          'complete-job',
+          'btn-job-complete',
+          'ghost',
+        ),
+      );
+      break;
+
+    case 'done':
+    case 'cancelled':
+    default:
+      container.remove();
+      break;
+  }
+}
+
+function createActionButton(
+  label: string,
+  action: string,
+  testId: string,
+  className: string,
+): HTMLButtonElement {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.textContent = label;
+  button.dataset.action = action;
+  button.setAttribute('data-testid', testId);
+  button.className = className;
+  return button;
 }

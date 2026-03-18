@@ -31,10 +31,3 @@ export function isNonNegativeInteger(value: unknown): boolean {
 export function isPositiveInteger(value: unknown): boolean {
   return typeof value === 'number' && Number.isInteger(value) && value > 0;
 }
-
-export function isValidIsoLikeDate(value: unknown): boolean {
-  if (typeof value !== 'string' || !value.trim()) return false;
-
-  const parsed = Date.parse(value);
-  return !Number.isNaN(parsed);
-}

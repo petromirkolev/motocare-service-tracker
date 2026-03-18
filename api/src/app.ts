@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import authRouter from './routes/auth';
-import bikesRouter from './routes/bikes';
-import jobsRouter from './routes/jobs';
+import auth_router from './routes/auth';
+import bikes_router from './routes/bikes';
+import jobs_router from './routes/jobs';
 
 const app = express();
 
@@ -12,8 +12,8 @@ app.use(express.json());
 app.get('/', (_req, res) => {
   res.json({ message: 'Moto Care Jobs API is running' });
 });
-app.use('/auth', authRouter);
-app.use('/bikes', bikesRouter);
-app.use('/jobs', jobsRouter);
+app.use('/auth', auth_router);
+app.use('/bikes', bikes_router);
+app.use('/jobs', jobs_router);
 
 export default app;

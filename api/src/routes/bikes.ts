@@ -7,9 +7,9 @@ import {
   listBikesByUserId,
 } from '../services/bikes-service';
 
-const bikesRouter = Router();
+const bikes_router = Router();
 
-bikesRouter.get('/', async (req, res) => {
+bikes_router.get('/', async (req, res) => {
   const user_id = String(req.query.user_id ?? '').trim();
 
   if (!user_id) {
@@ -26,7 +26,7 @@ bikesRouter.get('/', async (req, res) => {
   }
 });
 
-bikesRouter.post('/', async (req, res) => {
+bikes_router.post('/', async (req, res) => {
   const body = (req.body ?? {}) as CreateBikeBody;
 
   const user_id = normalizeString(body.user_id);
@@ -48,7 +48,7 @@ bikesRouter.post('/', async (req, res) => {
   if (!user_id || !make || !model || year === undefined) {
     res
       .status(400)
-      .json({ error: 'userId, make, model, year, and odo are required' });
+      .json({ error: 'user_id, make, model, year, and odo are required' });
     return;
   }
 
@@ -74,12 +74,12 @@ bikesRouter.post('/', async (req, res) => {
   }
 });
 
-bikesRouter.delete('/:id', async (req, res) => {
+bikes_router.delete('/:id', async (req, res) => {
   const bike_id = req.params.id;
   const user_id = String(req.query.userId ?? '').trim();
 
   if (!bike_id || !user_id) {
-    res.status(400).json({ error: 'ID and User ID are required' });
+    res.status(400).json({ error: 'bike_id and user_id are required' });
     return;
   }
 
@@ -96,4 +96,4 @@ bikesRouter.delete('/:id', async (req, res) => {
   }
 });
 
-export default bikesRouter;
+export default bikes_router;

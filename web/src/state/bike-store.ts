@@ -1,7 +1,5 @@
-/* Bike store manages the list of bikes and their basic information. */
-
 import type { Bike } from '../types/bikes';
-import { getState, setState } from './state-store';
+import { getState } from './state-store';
 
 export function readBikeForm(form: HTMLFormElement) {
   const fd = new FormData(form);
@@ -26,9 +24,5 @@ export const bikeStore = {
 
   getBike(id: string): Bike | undefined {
     return getState().bikes.find((b) => b.id === id);
-  },
-
-  reset() {
-    setState({ bikes: [] });
   },
 };

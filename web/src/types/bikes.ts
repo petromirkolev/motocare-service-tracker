@@ -1,5 +1,3 @@
-/* Type definition for a motorcycle */
-
 export type Bike = {
   id: string;
   user_id: string;

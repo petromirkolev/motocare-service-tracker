@@ -1,5 +1,3 @@
-/* This file defines TypeScript types related to authentication, including user information and response formats for login and registration. */
-
 export type AuthUser = {
   id: string;
   email: string;

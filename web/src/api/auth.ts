@@ -1,5 +1,3 @@
-/* This file contains functions for user authentication, including registration and login. */
-
 import { API_BASE_URL } from './base';
 import type {
   RegisterResponse,

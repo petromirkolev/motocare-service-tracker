@@ -1,5 +1,3 @@
-/* DOM selectors for the application. These are used to access and manipulate specific elements in the DOM throughout the app. */
-
 export const dom = {
   /* Initial screen */
   initialScreen: document.querySelector<HTMLElement>(

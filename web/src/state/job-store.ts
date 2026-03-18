@@ -1,5 +1,3 @@
-/* Job store manages the list of jobs */
-
 import type { Job } from '../types/job';
 import { getState } from './state-store';
 

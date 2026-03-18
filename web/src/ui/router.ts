@@ -1,13 +1,16 @@
 import { dom } from '../dom/selectors';
 import { render } from '../dom/render';
-import { readRegForm, readLoginForm } from '../state/auth-store';
+import {
+  readRegForm,
+  readLoginForm,
+  setCurrentUser,
+} from '../state/auth-store';
 import { registerUser, loginUser } from '../api/auth';
-import { setCurrentUser } from '../state/auth-store';
 import { readBikeForm } from '../state/bike-store';
 import { createBikeApi, deleteBikeApi } from '../api/bikes';
 import { refreshBikes, refreshJobs } from '../state/state-store';
 import { readJobForm } from '../state/job-store';
-import { createJobApi } from '../api/jobs';
+import { createJobApi, updateJobStatusApi } from '../api/jobs';
 
 type Action =
   | 'show-login-form'
@@ -19,7 +22,11 @@ type Action =
   | 'delete-bike'
   | 'go-jobs'
   | 'go-bikes'
-  | 'create-job';
+  | 'create-job'
+  | 'approve-job'
+  | 'start-job'
+  | 'complete-job'
+  | 'cancel-job';
 
 function bindEvents(): void {
   document.addEventListener('click', async (e: MouseEvent) => {
@@ -168,6 +175,77 @@ function bindEvents(): void {
           error instanceof Error
             ? render.errorMessage(error.message, 'create-job')
             : render.errorMessage('Something went wrong', 'create-job');
+        }
+        break;
+      }
+      case 'approve-job': {
+        try {
+          const jobCard = target.closest<HTMLElement>('[data-job-id]');
+          const id = jobCard?.dataset.jobId;
+
+          if (!id) {
+            throw new Error('Missing job id');
+          }
+
+          await updateJobStatusApi(id, 'approved');
+          await refreshJobs();
+          await render.jobScreen();
+        } catch (error) {
+          console.error(error);
+        }
+        break;
+      }
+
+      case 'start-job': {
+        try {
+          const jobCard = target.closest<HTMLElement>('[data-job-id]');
+          const id = jobCard?.dataset.jobId;
+
+          if (!id) {
+            throw new Error('Missing job id');
+          }
+
+          await updateJobStatusApi(id, 'in_progress');
+          await refreshJobs();
+          await render.jobScreen();
+        } catch (error) {
+          console.error(error);
+        }
+        break;
+      }
+
+      case 'complete-job': {
+        try {
+          const jobCard = target.closest<HTMLElement>('[data-job-id]');
+          const id = jobCard?.dataset.jobId;
+
+          if (!id) {
+            throw new Error('Missing job id');
+          }
+
+          await updateJobStatusApi(id, 'done');
+          await refreshJobs();
+          await render.jobScreen();
+        } catch (error) {
+          console.error(error);
+        }
+        break;
+      }
+
+      case 'cancel-job': {
+        try {
+          const jobCard = target.closest<HTMLElement>('[data-job-id]');
+          const id = jobCard?.dataset.jobId;
+
+          if (!id) {
+            throw new Error('Missing job id');
+          }
+
+          await updateJobStatusApi(id, 'cancelled');
+          await refreshJobs();
+          await render.jobScreen();
+        } catch (error) {
+          console.error(error);
         }
         break;
       }

@@ -1,5 +1,3 @@
-/* Type definition for a job */
-
 export type Job = {
   id: string;
   user_id: string;
