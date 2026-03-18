@@ -1,11 +1,12 @@
 import { dom } from '../dom/selectors';
 
-export type Screen = 'auth' | 'bikes';
+export type Screen = 'auth' | 'bikes' | 'jobs';
 export type AuthMode = 'login' | 'register';
 
 const SCREENS: Record<Screen, HTMLElement | null> = {
   auth: dom.initialScreen,
   bikes: dom.bikeScreen,
+  jobs: dom.jobScreen,
 };
 
 function setHidden(el: HTMLElement | null, hidden: boolean) {

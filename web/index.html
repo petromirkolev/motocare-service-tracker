@@ -141,50 +141,49 @@
         </section>
       </main>
 
+      <!-- TOPBAR -->
+      <header class="topbar" data-testid="topbar">
+        <div class="brand" data-testid="brand-jobs">
+          <div class="brand-mark" data-testid="brand-mark-jobs">MC</div>
+          <div>
+            <h1 data-testid="title-jobs">MotoCare Jobs</h1>
+            <p class="subtitle" data-testid="subtitle-jobs">
+              Motorcycle service job tracker
+            </p>
+          </div>
+        </div>
+
+        <nav class="topnav" data-testid="nav-main-jobs">
+          <a
+            href="#"
+            class="nav-link"
+            data-testid="nav-bikes"
+            data-action="go-bikes">
+            Bikes
+          </a>
+          <a
+            href="#"
+            class="nav-link"
+            data-testid="nav-jobs"
+            data-action="go-jobs">
+            Jobs
+          </a>
+        </nav>
+
+        <div class="topbar-actions" data-testid="topbar-actions-jobs">
+          <span class="muted" data-testid="text-current-user-email"></span>
+          <button
+            type="button"
+            class="ghost"
+            data-testid="btn-logout-topbar"
+            data-action="logout">
+            Logout
+          </button>
+        </div>
+      </header>
+
       <!-- APP VIEW: BIKES PAGE -->
       <div class="app-view is-hidden" data-testid="page-bikes">
-        <header class="topbar" data-testid="topbar-bikes">
-          <div class="brand" data-testid="brand-bikes">
-            <div class="brand-mark" data-testid="brand-mark-bikes">MC</div>
-            <div>
-              <h1 data-testid="title-bikes">MotoCare Jobs</h1>
-              <p class="subtitle" data-testid="subtitle-bikes">
-                Motorcycle service job tracker
-              </p>
-            </div>
-          </div>
-
-          <nav class="topnav" data-testid="nav-main-bikes">
-            <a
-              href="#"
-              class="nav-link active"
-              data-testid="nav-bikes"
-              data-action="go-bikes">
-              Bikes
-            </a>
-            <a
-              href="#"
-              class="nav-link"
-              data-testid="nav-jobs"
-              data-action="go-jobs">
-              Jobs
-            </a>
-          </nav>
-
-          <div class="topbar-actions" data-testid="topbar-actions-bikes">
-            <span class="muted" data-testid="text-current-user-bikes">
-              petromir@example.com
-            </span>
-            <button
-              type="button"
-              class="ghost"
-              data-testid="btn-logout-bikes"
-              data-action="logout">
-              Logout
-            </button>
-          </div>
-        </header>
-
         <main class="page-shell" data-testid="shell-bikes">
           <section class="panel" data-testid="panel-bikes">
             <div class="panel-header" data-testid="header-bikes">
@@ -265,48 +264,6 @@
 
       <!-- APP VIEW: JOBS PAGE -->
       <div class="app-view is-hidden" data-testid="page-jobs">
-        <header class="topbar" data-testid="topbar-jobs">
-          <div class="brand" data-testid="brand-jobs">
-            <div class="brand-mark" data-testid="brand-mark-jobs">MC</div>
-            <div>
-              <h1 data-testid="title-jobs">MotoCare Jobs</h1>
-              <p class="subtitle" data-testid="subtitle-jobs">
-                Motorcycle service job tracker
-              </p>
-            </div>
-          </div>
-
-          <nav class="topnav" data-testid="nav-main-jobs">
-            <a
-              href="#"
-              class="nav-link"
-              data-testid="nav-bikes"
-              data-action="go-bikes">
-              Bikes
-            </a>
-            <a
-              href="#"
-              class="nav-link active"
-              data-testid="nav-jobs"
-              data-action="go-jobs">
-              Jobs
-            </a>
-          </nav>
-
-          <div class="topbar-actions" data-testid="topbar-actions-jobs">
-            <span class="muted" data-testid="text-current-user-jobs">
-              petromir@example.com
-            </span>
-            <button
-              type="button"
-              class="ghost"
-              data-testid="btn-logout-jobs"
-              data-action="logout">
-              Logout
-            </button>
-          </div>
-        </header>
-
         <main class="page-shell" data-testid="shell-jobs">
           <section class="panel" data-testid="panel-jobs">
             <div class="panel-header" data-testid="header-jobs">
@@ -326,10 +283,7 @@
                   <select
                     id="job-bike"
                     name="bikeId"
-                    data-testid="select-job-bike">
-                    <option value="bike-1">Yamaha Tracer 9 GT</option>
-                    <option value="bike-2">Honda Hornet 600</option>
-                  </select>
+                    data-testid="select-job-bike"></select>
                 </label>
 
                 <label for="job-service-type">

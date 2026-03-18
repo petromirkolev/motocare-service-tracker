@@ -28,6 +28,13 @@ export const dom = {
     '[data-testid="message-register-error"]',
   ),
 
+  /* Topbar */
+  currentUserEmail: document.querySelector<HTMLElement>(
+    '[data-testid="text-current-user-email"]',
+  ),
+  navBikes: document.querySelector<HTMLElement>('[data-testid="nav-bikes"]'),
+  navJobs: document.querySelector<HTMLElement>('[data-testid="nav-jobs"]'),
+
   /* Bikes screen */
   bikeScreen: document.querySelector<HTMLFormElement>(
     '[data-testid="page-bikes"]',
@@ -35,9 +42,6 @@ export const dom = {
   bikeGrid: document.querySelector<HTMLElement>('[data-testid="list-bikes"]'),
   emptyBikeGrid: document.querySelector<HTMLElement>(
     '[data-testid="empty-bikes"]',
-  ),
-  currentUserEmail: document.querySelector<HTMLElement>(
-    '[data-testid="text-current-user-bikes"]',
   ),
   bikesCount: document.querySelector<HTMLElement>(
     '[data-testid="text-bike-count"]',
@@ -49,5 +53,11 @@ export const dom = {
   ),
   addBikeHint: document.querySelector<HTMLElement>(
     '[data-testid="message-bike-error"]',
+  ),
+
+  /* Jobs screen */
+  jobScreen: document.querySelector<HTMLElement>('[data-testid="page-jobs"]'),
+  bikesDropdown: document.querySelector<HTMLSelectElement>(
+    '[data-testid="select-job-bike"]',
   ),
 };

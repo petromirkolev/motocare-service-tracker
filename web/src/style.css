@@ -372,18 +372,22 @@ textarea::placeholder {
   gap: 0.75rem;
 }
 
+.tag,
 .bike-delete-btn {
-  min-width: 100px;
+  min-height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  padding: 0 1.25rem;
+  font-weight: 700;
 }
 
 .tag {
-  padding: 0.35rem 0.7rem;
-  border-radius: 999px;
   background: rgba(126, 224, 129, 0.14);
   color: var(--accent-2);
   font-size: 0.85rem;
-  font-weight: 700;
-  justify-self: end;
+  white-space: nowrap;
 }
 
 .toolbar {

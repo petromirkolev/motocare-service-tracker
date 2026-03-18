@@ -1,16 +1,9 @@
 import { dom } from './selectors';
 import { req } from '../utils/dom-helper';
 import { showScreen, showAuthForm } from '../ui/show-screen';
-import {
-  getState,
-  initState,
-  loadState,
-  refreshBikes,
-} from '../state/state-store';
+import { getState } from '../state/state-store';
 import { getCurrentUser } from '../state/auth-store';
 import { createBikeCard } from '../ui/create-bike-card';
-import { bikeStore } from '../state/bike-store';
-import { fetchBikes } from '../api/bikes';
 
 export const render = {
   initialScreen(): void {
@@ -34,6 +27,8 @@ export const render = {
 
   async bikeScreen(): Promise<any> {
     showScreen('bikes');
+    dom.navBikes?.classList.add('active');
+    dom.navJobs?.classList.remove('active');
 
     const grid = req(dom.bikeGrid, 'bikeGrid');
 
@@ -56,6 +51,20 @@ export const render = {
     bikes.length > 0
       ? req(dom.emptyBikeGrid, 'emptyBikeGrid').classList.add('is-hidden')
       : req(dom.emptyBikeGrid, 'emptyBikeGrid').classList.remove('is-hidden');
+  },
+
+  jobScreen(): void {
+    showScreen('jobs');
+    dom.navJobs?.classList.add('active');
+    dom.navBikes?.classList.remove('active');
+
+    const state = getState();
+    state.bikes.forEach((bike) => {
+      const option = document.createElement('option');
+      option.value = bike.id;
+      option.textContent = `${bike.make} ${bike.model}`;
+      dom.bikesDropdown?.appendChild(option);
+    });
   },
 
   errorMessage(

@@ -4,7 +4,7 @@ import { readRegForm, readLoginForm } from '../state/auth-store';
 import { registerUser, loginUser } from '../api/auth';
 import { setCurrentUser } from '../state/auth-store';
 import { readBikeForm } from '../state/bike-store';
-import { createBikeApi } from '../api/bikes';
+import { createBikeApi, deleteBikeApi } from '../api/bikes';
 import { refreshBikes } from '../state/state-store';
 
 type Action =
@@ -13,7 +13,10 @@ type Action =
   | 'login'
   | 'register'
   | 'logout'
-  | 'save-bike';
+  | 'save-bike'
+  | 'delete-bike'
+  | 'go-jobs'
+  | 'go-bikes';
 
 function bindEvents(): void {
   document.addEventListener('click', async (e: MouseEvent) => {
@@ -24,6 +27,8 @@ function bindEvents(): void {
 
     const action = el.dataset.action as Action;
     if (!action) return;
+
+    console.log(action);
 
     switch (action) {
       case 'show-login-form': {
@@ -101,6 +106,7 @@ function bindEvents(): void {
           await refreshBikes();
 
           addBikeForm.reset();
+          render.errorMessage('', action);
 
           render.bikeScreen();
         } catch (error) {
@@ -108,6 +114,30 @@ function bindEvents(): void {
             ? render.errorMessage(error.message, action)
             : render.errorMessage('Something went wrong', action);
         }
+        break;
+
+      case 'delete-bike':
+        try {
+          const el = target.closest<HTMLElement>('[data-action]');
+          const id = el?.dataset.bikeId;
+          if (!id) break;
+
+          await deleteBikeApi(id);
+          await refreshBikes();
+
+          render.bikeScreen();
+        } catch (error) {
+          console.error(error);
+        }
+        break;
+
+      case 'go-jobs':
+        render.jobScreen();
+        break;
+
+      case 'go-bikes':
+        refreshBikes();
+        render.bikeScreen();
         break;
     }
   });

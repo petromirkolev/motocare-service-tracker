@@ -80,85 +80,71 @@ bikesRouter.post('/', async (req, res) => {
   }
 });
 
-// bikesRouter.put('/:id', async (req, res) => {
-//   const bike_id = req.params.id;
-//   const body = (req.body ?? {}) as CreateBikeBody;
-//   const user_id = normalizeString(body.user_id);
-//   const make = normalizeString(body.make);
-//   const model = normalizeString(body.model);
-//   const year = body.year;
-//   const odo = body.odo;
+bikesRouter.put('/:id', async (req, res) => {
+  const bike_id = req.params.id;
+  const body = (req.body ?? {}) as CreateBikeBody;
+  const user_id = normalizeString(body.user_id);
+  const make = normalizeString(body.make);
+  const model = normalizeString(body.model);
+  const year = body.year;
 
-//   if (
-//     !bike_id ||
-//     !user_id ||
-//     !make ||
-//     !model ||
-//     year === undefined ||
-//     odo === undefined
-//   ) {
-//     res
-//       .status(400)
-//       .json({ error: 'id, user id, make, model, year, and odo are required' });
-//     return;
-//   }
+  if (!bike_id || !user_id || !make || !model || year === undefined) {
+    res
+      .status(400)
+      .json({ error: 'id, user id, make, model, year, and odo are required' });
+    return;
+  }
 
-//   if (year !== undefined && (year < 1900 || year > 2100)) {
-//     {
-//       res.status(400).json({ error: 'Invalid year' });
-//       return;
-//     }
-//   }
+  if (year !== undefined && (year < 1900 || year > 2100)) {
+    {
+      res.status(400).json({ error: 'Invalid year' });
+      return;
+    }
+  }
 
-//   const existingBike = await findBikeById(bike_id);
+  const existingBike = await findBikeById(bike_id);
 
-//   if (!existingBike) {
-//     res.status(404).json({ error: 'Bike not found' });
-//     return;
-//   }
+  if (!existingBike) {
+    res.status(404).json({ error: 'Bike not found' });
+    return;
+  }
 
-//   if (odo < existingBike.odo) {
-//     res.status(400).json({ error: 'Odometer cannot decrease' });
-//     return;
-//   }
+  try {
+    await updateBike({
+      id: bike_id,
+      user_id,
+      make: make.trim(),
+      model: model.trim(),
+      year: Number(year),
+    });
 
-//   try {
-//     await updateBike({
-//       id: bike_id,
-//       user_id,
-//       make: make.trim(),
-//       model: model.trim(),
-//       year: Number(year),
-//       odo: Number(odo),
-//     });
+    res.json({ message: 'Bike updated successfully' });
+  } catch (error) {
+    console.error('Update bike failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
-//     res.json({ message: 'Bike updated successfully' });
-//   } catch (error) {
-//     console.error('Update bike failed:', error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// });
+bikesRouter.delete('/:id', async (req, res) => {
+  const bike_id = req.params.id;
+  const user_id = String(req.query.userId ?? '').trim();
 
-// bikesRouter.delete('/:id', async (req, res) => {
-//   const bike_id = req.params.id;
-//   const user_id = String(req.query.userId ?? '').trim();
+  if (!bike_id || !user_id) {
+    res.status(400).json({ error: 'ID and User ID are required' });
+    return;
+  }
 
-//   if (!bike_id || !user_id) {
-//     res.status(400).json({ error: 'ID and User ID are required' });
-//     return;
-//   }
+  try {
+    await deleteBike({
+      id: bike_id,
+      user_id,
+    });
 
-//   try {
-//     await deleteBike({
-//       id: bike_id,
-//       user_id,
-//     });
-
-//     res.json({ message: 'Bike deleted successfully' });
-//   } catch (error) {
-//     console.error('Delete bike failed:', error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// });
+    res.json({ message: 'Bike deleted successfully' });
+  } catch (error) {
+    console.error('Delete bike failed:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 export default bikesRouter;

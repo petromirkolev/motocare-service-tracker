@@ -12,21 +12,17 @@ export function createBikeCard(bike: Bike): HTMLElement {
 
   article.innerHTML = `
   <div class="bike-card-main" data-testid="bike-card-main">
-    <div>
+    <div class="bike-card-text">
       <h4 data-testid="bike-name"></h4>
       <p class="muted" data-testid="bike-meta"></p>
     </div>
-    <span class="tag" data-testid="bike-tag">Ready</span>
-  </div>
-
-  <div class="bike-card-actions" data-testid="bike-card-actions">
-    <button
-      type="button"
-      class="ghost danger bike-delete-btn"
+    <div class="bike-card-actions" data-testid="bike-card-actions">
+      <span class="tag" data-testid="bike-tag">Not ready</span>
+      <button type="button" class="ghost danger bike-delete-btn"
       data-testid="btn-delete-bike"
-      data-action="delete-bike">
-      Delete
-    </button>
+      data-bike-id="${id}"
+      data-action="delete-bike">Delete</button>
+    </div>
   </div>
 `;
 
