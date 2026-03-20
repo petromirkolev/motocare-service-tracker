@@ -10,6 +10,14 @@ export class JobsPage {
   readonly jobSelectOdo: Locator;
   readonly jobAddButton: Locator;
   readonly jobAddMessage: Locator;
+  readonly jobStatus: Locator;
+  readonly filterAllButton: Locator;
+  readonly filterRequestedButton: Locator;
+  readonly filterApprovedButton: Locator;
+  readonly filterInProgressButton: Locator;
+  readonly filterDoneButton: Locator;
+  readonly filterCancelledButton: Locator;
+  readonly jobList: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -21,6 +29,14 @@ export class JobsPage {
     this.jobSelectOdo = page.getByTestId('input-job-odometer');
     this.jobAddButton = page.getByTestId('btn-create-job');
     this.jobAddMessage = page.getByTestId('message-job-error');
+    this.jobStatus = page.getByTestId('status-job');
+    this.filterAllButton = page.getByTestId('filter-jobs-all');
+    this.filterRequestedButton = page.getByTestId('filter-jobs-requested');
+    this.filterApprovedButton = page.getByTestId('filter-jobs-approved');
+    this.filterInProgressButton = page.getByTestId('filter-jobs-in-progress');
+    this.filterDoneButton = page.getByTestId('filter-jobs-done');
+    this.filterCancelledButton = page.getByTestId('filter-jobs-cancelled');
+    this.jobList = page.getByTestId('list-jobs');
   }
 
   async gotoJobsPage(): Promise<void> {
@@ -43,7 +59,7 @@ export class JobsPage {
         .filter({ hasText: name }),
     });
 
-    await expect(job).toHaveCount(1);
+    await expect(job).toBeVisible();
   }
 
   async expectJobNotVisible(name: string): Promise<void> {
@@ -53,7 +69,7 @@ export class JobsPage {
         .filter({ hasText: name }),
     });
 
-    await expect(job).toHaveCount(0);
+    await expect(job).not.toBeVisible();
   }
 
   async expectSuccess(message: string): Promise<void> {
@@ -62,5 +78,71 @@ export class JobsPage {
 
   async expectError(message: string): Promise<void> {
     await expect(this.jobAddMessage).toContainText(message);
+  }
+
+  async findJobByName(service: string) {
+    return this.page.getByTestId('card-job').filter({
+      has: this.page.getByTestId('text-job-service-type').filter({
+        hasText: service,
+      }),
+    });
+  }
+
+  async markJobAs(
+    service: string,
+    status: 'approved' | 'started' | 'done' | 'cancelled',
+  ): Promise<void> {
+    const job = await this.findJobByName(service);
+    await expect(job).toHaveCount(1);
+
+    switch (status) {
+      case 'approved':
+        await job.getByTestId('btn-job-approve').click();
+        break;
+      case 'started':
+        await job.getByTestId('btn-job-start').click();
+        break;
+      case 'done':
+        await job.getByTestId('btn-job-complete').click();
+        break;
+      case 'cancelled':
+        await job.getByTestId('btn-job-cancel').click();
+        break;
+      default:
+        break;
+    }
+  }
+
+  async filterJobs(
+    criteria:
+      | 'all'
+      | 'requested'
+      | 'approved'
+      | 'inprogress'
+      | 'done'
+      | 'cancelled',
+  ): Promise<void> {
+    switch (criteria) {
+      case 'all':
+        this.filterAllButton.click();
+        break;
+      case 'requested':
+        this.filterRequestedButton.click();
+        break;
+      case 'approved':
+        this.filterApprovedButton.click();
+        break;
+      case 'inprogress':
+        this.filterInProgressButton.click();
+        break;
+      case 'done':
+        this.filterDoneButton.click();
+        break;
+      case 'cancelled':
+        this.filterCancelledButton.click();
+        break;
+      default:
+        break;
+    }
   }
 }

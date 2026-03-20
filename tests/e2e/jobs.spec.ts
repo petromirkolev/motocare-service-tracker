@@ -5,7 +5,7 @@ import { validInput, uniqueEmail } from '../utils/test-data';
 import { BikesPage } from '../pages/bikes-page';
 import { JobsPage } from '../pages/jobs-page';
 
-function seededBike() {
+function uniqueBike() {
   const suffix = Date.now().toString();
   return {
     make: `Yamaha-${suffix}`,
@@ -15,11 +15,12 @@ function seededBike() {
 }
 
 const job = {
-  service: 'Oil Change',
+  oilService: 'Oil Change',
+  chainService: 'Chain Service',
   odo: '1000',
 };
 
-test.describe('Bikes test suite', () => {
+test.describe('Jobs test suite', () => {
   let loginPage: LoginPage;
   let bikePage: BikesPage;
   let registerPage: RegisterPage;
@@ -47,7 +48,7 @@ test.describe('Bikes test suite', () => {
       'Login success, opening garage...',
     );
 
-    bike = seededBike();
+    bike = uniqueBike();
 
     await bikePage.addBike(bike);
     await bikePage.expectBikeVisible(bike.make);
@@ -55,65 +56,236 @@ test.describe('Bikes test suite', () => {
     await jobsPage.gotoJobsPage();
   });
 
-  test('User can successfully create a job with valid data', async () => {
-    await jobsPage.addJob(job.service, `${bike.make} ${bike.model}`, job.odo);
-    await jobsPage.expectJobVisible(job.service);
+  test.describe('Jobs create and validation test suite', () => {
+    test('User can successfully create a job with valid data', async () => {
+      await jobsPage.addJob(
+        job.oilService,
+        `${bike.make} ${bike.model}`,
+        job.odo,
+      );
+      await jobsPage.expectJobVisible(job.oilService);
+    });
+
+    test('Created job persists after page reload', async ({ page }) => {
+      await jobsPage.addJob(
+        job.oilService,
+        `${bike.make} ${bike.model}`,
+        job.odo,
+      );
+      await jobsPage.expectJobVisible(job.oilService);
+
+      await page.reload();
+
+      await jobsPage.gotoJobsPage();
+      await jobsPage.expectJobVisible(job.oilService);
+    });
+
+    test('Create job with missing bike is rejected', async () => {
+      await jobsPage.addJob(job.oilService, 'Select bike', job.odo);
+
+      await jobsPage.expectError('Bike is required');
+    });
+
+    test('Create job with missing service type is rejected', async () => {
+      await jobsPage.addJob(
+        'Select service type',
+        `${bike.make} ${bike.model}`,
+        job.odo,
+      );
+
+      await jobsPage.expectError('Service type is required');
+    });
+
+    test('Create job with missing odometer is rejected', async () => {
+      await jobsPage.addJob(job.oilService, `${bike.make} ${bike.model}`, '');
+
+      await jobsPage.expectError('Odometer is required');
+    });
+
+    test('Create job with negative odometer is rejected', async () => {
+      await jobsPage.addJob(
+        job.oilService,
+        `${bike.make} ${bike.model}`,
+        '-1000',
+      );
+
+      await jobsPage.expectError('Odometer must be a valid number');
+    });
   });
 
-  test('Created job persists after page reload', async ({ page }) => {
-    await jobsPage.addJob(job.service, `${bike.make} ${bike.model}`, job.odo);
-    await jobsPage.expectJobVisible(job.service);
+  test.describe('Jobs status flow test suite', () => {
+    test('Job status is successfully changed from "Requested" to "Approved"', async () => {
+      await jobsPage.addJob(
+        job.oilService,
+        `${bike.make} ${bike.model}`,
+        job.odo,
+      );
 
-    await page.reload();
+      await jobsPage.expectJobVisible(job.oilService);
+      await expect(jobsPage.jobStatus).toHaveText('Requested');
 
-    await jobsPage.gotoJobsPage();
-    await jobsPage.expectJobVisible(job.service);
+      await jobsPage.markJobAs(job.oilService, 'approved');
+
+      await expect(jobsPage.jobStatus).toHaveText('Approved');
+    });
+
+    test('Job status is successfully changed from "Approved" to "In progress"', async () => {
+      await jobsPage.addJob(
+        job.oilService,
+        `${bike.make} ${bike.model}`,
+        job.odo,
+      );
+
+      await jobsPage.expectJobVisible(job.oilService);
+      await expect(jobsPage.jobStatus).toHaveText('Requested');
+
+      await jobsPage.markJobAs(job.oilService, 'approved');
+      await expect(jobsPage.jobStatus).toHaveText('Approved');
+
+      await jobsPage.markJobAs(job.oilService, 'started');
+      await expect(jobsPage.jobStatus).toHaveText('In Progress');
+    });
+
+    test('Job status is successfully changed from "In progress" to "Done"', async () => {
+      await jobsPage.addJob(
+        job.oilService,
+        `${bike.make} ${bike.model}`,
+        job.odo,
+      );
+
+      await jobsPage.expectJobVisible(job.oilService);
+      await expect(jobsPage.jobStatus).toHaveText('Requested');
+
+      await jobsPage.markJobAs(job.oilService, 'approved');
+      await expect(jobsPage.jobStatus).toHaveText('Approved');
+
+      await jobsPage.markJobAs(job.oilService, 'started');
+      await expect(jobsPage.jobStatus).toHaveText('In Progress');
+
+      await jobsPage.markJobAs(job.oilService, 'done');
+      await expect(jobsPage.jobStatus).toHaveText('Done');
+    });
+
+    test('Job status is successfully changed from "Requested" to "Cancelled"', async () => {
+      await jobsPage.addJob(
+        job.oilService,
+        `${bike.make} ${bike.model}`,
+        job.odo,
+      );
+
+      await jobsPage.expectJobVisible(job.oilService);
+      await expect(jobsPage.jobStatus).toHaveText('Requested');
+
+      await jobsPage.markJobAs(job.oilService, 'cancelled');
+      await expect(jobsPage.jobStatus).toHaveText('Cancelled');
+    });
+
+    test('Job status is successfully changed from "Approved" to "Cancelled"', async () => {
+      await jobsPage.addJob(
+        job.oilService,
+        `${bike.make} ${bike.model}`,
+        job.odo,
+      );
+
+      await jobsPage.expectJobVisible(job.oilService);
+      await expect(jobsPage.jobStatus).toHaveText('Requested');
+
+      await jobsPage.markJobAs(job.oilService, 'approved');
+      await expect(jobsPage.jobStatus).toHaveText('Approved');
+
+      await jobsPage.markJobAs(job.oilService, 'cancelled');
+      await expect(jobsPage.jobStatus).toHaveText('Cancelled');
+    });
   });
 
-  test('Create job with missing bike is rejected', async ({ page }) => {
-    await jobsPage.addJob(job.service, 'Select bike', job.odo);
+  test.describe('Jobs filtering test suite', () => {
+    test.beforeEach(async () => {
+      await jobsPage.addJob(
+        job.oilService,
+        `${bike.make} ${bike.model}`,
+        job.odo,
+      );
+      await jobsPage.expectJobVisible(job.oilService);
 
-    await jobsPage.expectError('Bike is required');
+      await jobsPage.addJob(
+        job.chainService,
+        `${bike.make} ${bike.model}`,
+        job.odo,
+      );
+      await jobsPage.expectJobVisible(job.chainService);
+    });
+
+    test('"All" filter shows all jobs', async () => {
+      await jobsPage.filterJobs('all');
+
+      await jobsPage.expectJobVisible(job.oilService);
+      await jobsPage.expectJobVisible(job.chainService);
+    });
+
+    test('"Requested" filter shows only requested jobs', async () => {
+      await jobsPage.markJobAs(job.oilService, 'approved');
+
+      await jobsPage.filterJobs('requested');
+
+      await jobsPage.expectJobVisible(job.chainService);
+      await jobsPage.expectJobNotVisible(job.oilService);
+    });
+
+    test('"Approved" filter shows only approved jobs', async () => {
+      await jobsPage.markJobAs(job.oilService, 'approved');
+
+      await jobsPage.filterJobs('approved');
+
+      await jobsPage.expectJobVisible(job.oilService);
+      await jobsPage.expectJobNotVisible(job.chainService);
+    });
+
+    test('"In progress" filter shows only in progress jobs', async () => {
+      await jobsPage.markJobAs(job.oilService, 'approved');
+      await jobsPage.markJobAs(job.oilService, 'started');
+
+      await jobsPage.filterJobs('inprogress');
+
+      await jobsPage.expectJobVisible(job.oilService);
+      await jobsPage.expectJobNotVisible(job.chainService);
+    });
+
+    test('"Done" filter shows only done jobs', async () => {
+      await jobsPage.markJobAs(job.oilService, 'approved');
+      await jobsPage.markJobAs(job.oilService, 'started');
+      await jobsPage.markJobAs(job.oilService, 'done');
+
+      await jobsPage.filterJobs('done');
+
+      await jobsPage.expectJobVisible(job.oilService);
+      await jobsPage.expectJobNotVisible(job.chainService);
+    });
+
+    test('"Cancelled" filter shows only cancelled jobs', async () => {
+      await jobsPage.markJobAs(job.oilService, 'cancelled');
+
+      await jobsPage.filterJobs('cancelled');
+
+      await jobsPage.expectJobVisible(job.oilService);
+      await jobsPage.expectJobNotVisible(job.chainService);
+    });
   });
+  test.describe('Jobs integrity test suite', () => {
+    test('Deleting a bike removes related jobs from UI', async () => {
+      await jobsPage.addJob(
+        job.oilService,
+        `${bike.make} ${bike.model}`,
+        job.odo,
+      );
+      await jobsPage.expectJobVisible(job.oilService);
 
-  test('Create job with missing service type is rejected', async ({ page }) => {
-    await jobsPage.addJob(
-      'Select service type',
-      `${bike.make} ${bike.model}`,
-      job.odo,
-    );
+      await bikePage.gotoBikesPage();
 
-    await jobsPage.expectError('Service type is required');
-  });
+      await bikePage.deleteBikeByName(bike.make);
 
-  test('Create job with missing odometer is rejected', async ({ page }) => {
-    await jobsPage.addJob(job.service, `${bike.make} ${bike.model}`, '');
+      await jobsPage.gotoJobsPage();
 
-    await jobsPage.expectError('Odometer is required');
-  });
-
-  test('Create job with negative odometer is rejected', async ({ page }) => {
-    await jobsPage.addJob(job.service, `${bike.make} ${bike.model}`, '-1000');
-
-    await jobsPage.expectError('Odometer must be a valid number');
+      await jobsPage.expectJobNotVisible(job.oilService);
+    });
   });
 });
-
-// Status flow
-// requested → approved
-// approved → in progress
-// in progress → done
-// requested → cancelled
-// approved → cancelled
-
-// Filtering
-// all filter shows all jobs
-// requested filter shows only requested jobs
-// approved filter shows only approved jobs
-// in progress filter shows only in progress jobs
-// done filter shows only done jobs
-// cancelled filter shows only cancelled jobs
-// active filter button changes correctly
-
-// Integrity
-// deleting a bike removes related jobs from UI
