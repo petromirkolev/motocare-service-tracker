@@ -1,6 +1,6 @@
-# MotoCare Jobs
+# MotoCare Service Tracker
 
-MotoCare Jobs is a small full-stack motorcycle service job tracker built as a QA Automation portfolio project. It focuses on auth, bike management, service job workflows, controlled status transitions, API validation, UI automation, and running the app in Docker.
+MotoCare Service Tracker is a small full-stack motorcycle service job tracker built as a QA Automation portfolio project. It focuses on auth, bike management, service job workflows, controlled status transitions, API validation, UI automation, and running the app in Docker.
 
 ---
 
@@ -29,6 +29,10 @@ The project demonstrates work across the full stack:
 - Auth persistence across refresh
 - Per-user data isolation
 
+![MotoCare Service Tracker registration flow](docs/registration.gif)
+
+![MotoCare Service Tracker login flow](docs/login.gif)
+
 ### Bikes
 
 - Add bikes
@@ -40,6 +44,8 @@ The project demonstrates work across the full stack:
   - **Ready** if no open jobs exist
   - **Not ready** if at least one related open job exists
 
+  ![MotoCare Service Tracker bikes flow](docs/addbike.gif)
+
 ### Service jobs
 
 - Create service jobs for a selected bike
@@ -47,6 +53,8 @@ The project demonstrates work across the full stack:
 - Persist jobs across refresh
 - Per-user job isolation
 - Per-bike job association
+
+![MotoCare Service Tracker jobs flow](docs/addjob.gif)
 
 ### Job statuses
 
@@ -57,6 +65,8 @@ MotoCare Jobs supports these statuses:
 - "in_progress"
 - "done"
 - "cancelled"
+
+![MotoCare Service Tracker job progress flow](docs/completejob.gif)
 
 Allowed transitions:
 
