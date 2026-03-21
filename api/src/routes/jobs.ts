@@ -5,7 +5,7 @@ import {
   findJobById,
   updateJobStatus,
 } from '../services/job-service';
-import { CreateJobBody, JobRow } from '../types/job';
+import { CreateJobBody } from '../types/job';
 import { normalizeString } from '../utils/validation';
 
 const jobs_router = Router();

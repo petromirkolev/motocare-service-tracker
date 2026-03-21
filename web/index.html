@@ -19,21 +19,24 @@
                 class="brand-logo"
                 data-testid="logo-auth" />
               <div>
-                <h1 data-testid="title-auth">MotoCare Jobs</h1>
+                <h1 data-testid="title-auth">MotoCare Service Tracker</h1>
                 <p class="subtitle" data-testid="subtitle-auth">
-                  Motorcycle service job tracker
+                  Keep your bike service jobs in one place
                 </p>
               </div>
             </div>
 
             <div class="hero-copy" data-testid="auth-hero-copy">
               <h2 data-testid="auth-hero-heading">
-                Track bikes. Create service jobs. Move work through a clean
-                workflow.
+                Add bikes <br />
+                Create service jobs <br />
+                Move through an organized flow
               </h2>
+              <br />
               <p data-testid="auth-hero-text">
-                A small motorcycle workshop app focused on bikes, service job
-                tracking and status management for the modern motorcycle shop.
+                Your personal motorcycle service workshop assistant focused on
+                service job tracking and status management for the modern
+                mechanic.
               </p>
             </div>
           </div>
@@ -144,11 +147,15 @@
       <!-- TOPBAR -->
       <header class="topbar" data-testid="topbar">
         <div class="brand" data-testid="brand-jobs">
-          <div class="brand-mark" data-testid="brand-mark-jobs">MC</div>
+          <img
+            src="./src/assets/logo.png"
+            alt="MotoCare Jobs logo"
+            class="brand-logo"
+            data-testid="logo-auth" />
           <div>
-            <h1 data-testid="title-jobs">MotoCare Jobs</h1>
+            <h1 data-testid="title-jobs">MotoCare Service Tracker</h1>
             <p class="subtitle" data-testid="subtitle-jobs">
-              Motorcycle service job tracker
+              Your personal workshop assistant
             </p>
           </div>
         </div>
@@ -187,21 +194,21 @@
         <main class="page-shell" data-testid="shell-bikes">
           <section class="panel" data-testid="panel-bikes">
             <div class="panel-header" data-testid="header-bikes">
+              <h2 data-testid="heading-jobs">Motorcycles</h2>
+
               <p data-testid="text-bikes-description">
-                Add motorcycles that you want to service
+                Add motorcycles to your workshop
               </p>
             </div>
 
             <div class="content-grid" data-testid="content-bikes">
               <div class="stack">
                 <div class="section-row section-row--placeholder">
-                  <h3>Add bike</h3>
+                  <h3>Add a bike</h3>
                   <span class="muted">&nbsp;</span>
                 </div>
 
                 <form class="card form-card narrow" data-testid="form-add-bike">
-                  <h3 data-testid="heading-add-bike">Add bike</h3>
-
                   <label for="bike-make">
                     Make
                     <input
@@ -238,7 +245,7 @@
                     type="button"
                     data-testid="btn-save-bike"
                     data-action="save-bike">
-                    Save bike
+                    Add bike
                   </button>
                 </form>
               </div>
@@ -267,8 +274,7 @@
             <div class="panel-header" data-testid="header-jobs">
               <h2 data-testid="heading-jobs">Service jobs</h2>
               <p data-testid="text-jobs-description">
-                Create jobs, filter them by status, and move them through the
-                workflow
+                Add jobs to the motorcycles in your workshop
               </p>
             </div>
 
@@ -307,7 +313,7 @@
                     id="job-odometer"
                     name="odometer"
                     type="number"
-                    placeholder="24500"
+                    placeholder="0"
                     data-testid="input-job-odometer" />
                 </label>
 
