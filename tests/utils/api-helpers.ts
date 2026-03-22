@@ -1,7 +1,37 @@
 import { API_URL, PASSWORD } from './constants';
-import { expect, APIRequestContext } from '@playwright/test';
+import { expect, APIRequestContext, APIResponse } from '@playwright/test';
 import type { LoginResponse } from '../types/login';
 import { JobResponse } from '../types/job';
+
+export async function registerUserApi(
+  request: APIRequestContext,
+  email: string,
+  password = PASSWORD,
+): Promise<APIResponse> {
+  const response = await request.post(`${API_URL}/auth/register`, {
+    data: {
+      email,
+      password,
+    },
+  });
+
+  return response;
+}
+
+export async function loginUserApi(
+  request: APIRequestContext,
+  email: string,
+  password = PASSWORD,
+): Promise<APIResponse> {
+  const response = await request.post(`${API_URL}/auth/login`, {
+    data: {
+      email,
+      password,
+    },
+  });
+
+  return response as APIResponse;
+}
 
 export async function registerUser(
   request: APIRequestContext,
@@ -39,6 +69,28 @@ export async function loginUser(
   expect(body.message).toBe('Login successful');
 
   return body as LoginResponse;
+}
+
+export async function addBikeApi(
+  request: APIRequestContext,
+  user_id: string,
+  overrides: Partial<{
+    make: string;
+    model: string;
+    year: number;
+  }> = {},
+): Promise<APIResponse> {
+  const response = await request.post(`${API_URL}/bikes`, {
+    data: {
+      user_id,
+      make: 'Yamaha',
+      model: 'Tracer 9GT',
+      year: 2021,
+      ...overrides,
+    },
+  });
+
+  return response;
 }
 
 export async function addBike(

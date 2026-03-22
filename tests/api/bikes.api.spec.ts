@@ -7,6 +7,7 @@ import {
   addBike,
   listBikes,
   addJob,
+  addBikeApi,
 } from '../utils/api-helpers';
 
 test.describe('Garage API test suite', () => {
@@ -28,7 +29,6 @@ test.describe('Garage API test suite', () => {
     const response = await request.post(`${API_URL}/bikes`, {
       data: {
         user_id,
-        make: '',
         model: 'Tracer 9GT',
         year: 2020,
       },
@@ -45,7 +45,6 @@ test.describe('Garage API test suite', () => {
       data: {
         user_id,
         make: 'Yamaha',
-        model: '',
         year: 2020,
       },
     });
@@ -62,7 +61,6 @@ test.describe('Garage API test suite', () => {
         user_id,
         make: 'Yamaha',
         model: 'Tracer 9GT',
-        year: '',
       },
     });
 
@@ -75,14 +73,7 @@ test.describe('Garage API test suite', () => {
   test('Create bike with invalid year < 1900 is rejected', async ({
     request,
   }) => {
-    const response = await request.post(`${API_URL}/bikes`, {
-      data: {
-        user_id,
-        make: 'Yamaha',
-        model: 'Tracer 9GT',
-        year: '1899',
-      },
-    });
+    const response = await addBikeApi(request, user_id, { year: 1899 });
 
     expect(response.status()).toBe(400);
 
@@ -93,14 +84,7 @@ test.describe('Garage API test suite', () => {
   test('Create bike with invalid year > 2100 is rejected', async ({
     request,
   }) => {
-    const response = await request.post(`${API_URL}/bikes`, {
-      data: {
-        user_id,
-        make: 'Yamaha',
-        model: 'Tracer 9GT',
-        year: '2101',
-      },
-    });
+    const response = await addBikeApi(request, user_id, { year: 2101 });
 
     expect(response.status()).toBe(400);
 
