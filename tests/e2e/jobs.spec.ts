@@ -233,17 +233,14 @@ test.describe('Jobs test suite', () => {
       await jobsPage.expectJobVisible(job.chainService);
     });
 
-    test('"Requested" filter shows only requested jobs', async ({ page }) => {
+    test('@test "Requested" filter shows only requested jobs', async ({
+      page,
+    }) => {
       await jobsPage.markJobAs(job.oilService, 'approved');
 
       await jobsPage.filterJobs('requested');
 
-      await page.waitForTimeout(500);
-
       await jobsPage.expectJobVisible(job.chainService);
-
-      await page.waitForTimeout(500);
-
       await jobsPage.expectJobNotVisible(job.oilService);
     });
 

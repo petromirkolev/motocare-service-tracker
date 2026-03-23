@@ -98,15 +98,19 @@ export class JobsPage {
     switch (status) {
       case 'approved':
         await job.getByTestId('btn-job-approve').click();
+        await expect(job.getByTestId('status-job')).toHaveText(/approved/i);
         break;
       case 'started':
         await job.getByTestId('btn-job-start').click();
+        await expect(job.getByTestId('status-job')).toHaveText(/in progress/i);
         break;
       case 'done':
         await job.getByTestId('btn-job-complete').click();
+        await expect(job.getByTestId('status-job')).toHaveText(/done/i);
         break;
       case 'cancelled':
         await job.getByTestId('btn-job-cancel').click();
+        await expect(job.getByTestId('status-job')).toHaveText(/cancelled/i);
         break;
       default:
         break;
