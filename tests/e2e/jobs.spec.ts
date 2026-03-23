@@ -226,16 +226,14 @@ test.describe('Jobs test suite', () => {
         .toBe(0);
     });
 
-    test('"All" filter shows all jobs', async ({ page }) => {
+    test('"All" filter shows all jobs', async () => {
       await jobsPage.filterJobs('all');
 
       await jobsPage.expectJobVisible(job.oilService);
       await jobsPage.expectJobVisible(job.chainService);
     });
 
-    test('@test "Requested" filter shows only requested jobs', async ({
-      page,
-    }) => {
+    test('"Requested" filter shows only requested jobs', async () => {
       await jobsPage.markJobAs(job.oilService, 'approved');
 
       await jobsPage.filterJobs('requested');
