@@ -1,43 +1,24 @@
 import { db } from './db';
 
-export function runQuery(sql: string, params: unknown[] = []): Promise<void> {
-  return new Promise((resolve, reject) => {
-    db.run(sql, params, (err) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-
-      resolve();
-    });
-  });
+export async function runQuery(
+  sql: string,
+  params: unknown[] = [],
+): Promise<void> {
+  await db.query(sql, params);
 }
 
-export function getOne<T>(
+export async function getOne<T>(
   sql: string,
   params: unknown[] = [],
 ): Promise<T | undefined> {
-  return new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-
-      resolve(row as T | undefined);
-    });
-  });
+  const result = await db.query(sql, params);
+  return result.rows[0] as T | undefined;
 }
 
-export function getAll<T>(sql: string, params: unknown[] = []): Promise<T[]> {
-  return new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-
-      resolve(rows as T[]);
-    });
-  });
+export async function getAll<T>(
+  sql: string,
+  params: unknown[] = [],
+): Promise<T[]> {
+  const result = await db.query(sql, params);
+  return result.rows as T[];
 }
