@@ -1,21 +1,21 @@
 # MotoCare Service Tracker
 
-MotoCare Service Tracker is a small full-stack motorcycle service job tracker built as a QA Automation portfolio project. It focuses on auth, bike management, service job workflows, controlled status transitions, API validation, UI automation, and running the app in Docker.
+MotoCare Service Tracker is a full-stack motorcycle service workflow app built as a QA Automation portfolio project. It focuses on service-job lifecycle management, backend-driven state transitions, filtering, persistence, and end-to-end reliability.
+
+**Live app:** https://motocare-service-tracker.onrender.com/
 
 ---
 
 ## What this project demonstrates
 
-The project demonstrates work across the full stack:
-
-- **Frontend:** Vite + Vanilla TypeScript UI
-- **Backend:** Node.js + Express + TypeScript REST API
-- **Persistence:** SQLite database
-- **Workflow logic:** controlled service-job status transitions
-- **API testing:** Playwright APIRequestContext coverage
-- **UI automation:** Playwright end-to-end user-flow coverage
-- **Testability:** stable "data-testid" selectors and page-object-based UI tests
-- **Containerization:** Docker + Docker Compose
+- building and testing a stateful full-stack workflow app
+- frontend and backend validation working together
+- backend-driven job status transitions
+- Playwright E2E coverage across real user flows
+- Playwright API coverage for backend contracts and validation
+- CI execution through GitHub Actions
+- testability-focused design: stable data-testid selectors, reusable Page Objects, isolated test data, and Dockerized local runs
+- real deployment with **Render + Neon**
 
 ---
 
@@ -101,9 +101,11 @@ Jobs can be filtered by status:
 
 - **Frontend:** Vite + Vanilla TypeScript
 - **Backend:** Node.js + Express + TypeScript
-- **Database:** SQLite
-- **Testing:** Playwright
+- **Database:** PostgreSQL (Neon)
 - **Containerization:** Docker + Docker Compose
+- **Testing:** Playwright
+- **CI:** GitHub Actions
+- **Deployment:** Render + Neon
 
 ---
 
@@ -114,140 +116,85 @@ Jobs can be filtered by status:
 /api    -> backend REST API (Node + Express + TypeScript)
 /tests  -> Playwright API + UI tests
 /docs   -> screenshots / assets
+Neon    -> PostgreSQL persistence layer
+Render  -> frontend + backend hosting
 ```
 
-## Main entities
+## Test coverage
 
-### User
+The Playwright suite currently covers:
 
-- register
-- login
-- logout
+### Auth
 
-### Bike
+- registration happy path
+- duplicate registration
+- invalid credential handling
+- login happy path
+- invalid login cases
 
-- make
-- model
-- year
-- readiness state
+### Bikes
 
-### Job
+- create bike
+- delete bike
+- validation rules
+- user isolation
 
-- bike
-- service type
-- odometer
-- note
-- status
+### Jobs
+
+- create job
+- validation rules
+- persistence after reload
+- filter behavior
+- allowed status transitions
+- bike isolation
+- user isolation
 
 ## API coverage
 
-The project includes API-level tests for the main backend workflows.
+The project includes both Playwright E2E tests and Playwright API tests.
 
 ### Auth API
 
 - register success
+- duplicate email rejection
+- validation checks
 - login success
-- validation and error cases
+- invalid login rejection
 
 ### Bikes API
 
 - create bike success
-- missing field validation
-- invalid year validation
-- list only current user bikes
-- delete bike
-- deleting a bike removes related jobs
+- validation errors
+- delete bike success
+- integrity checks
 
 ### Jobs API
 
 - create job success
-- missing bike validation
-- missing service type validation
-- missing odometer validation
-- invalid odometer validation
-- list only current user jobs
-- valid status transitions
-- invalid status transitions
-- forbidden / not found cases
+- status transition rules
+- filtering-related behavior
+- integrity rules
 
-## UI coverage
+## How tests are run
 
-The project includes Playwright end-to-end coverage for the main user-visible workflows.
+Playwright is initialized at the repo root because tests target the whole system, not just the frontend.
 
-### Bikes UI
-
-- add bike
-- delete bike
-- persistence after refresh
-- empty state behavior
-- user isolation
-- readiness state changes based on jobs
-
-### Jobs UI
-
-- create job
-- persistence after refresh
-- visible validation errors
-- requested > approved
-- approved > in progress
-- in progress > done
-- requested > cancelled
-- approved > cancelled
-- status filtering
-- deleting a bike removes related jobs from the UI
-
-## Running locally
-
-You need to run both the backend and frontend.
-
-Terminal 1 — API
-
-```bash
-cd api
-npm install
-npm run dev
-```
-
-Terminal 2 — Web
-
-```bash
-cd web
-npm install
-npm run dev
-```
-
-Then open the local frontend URL shown by Vite.
-
-## Running with Docker
-
-MotoCare Jobs can also be run through Docker Compose.
-
-### Start the full stack
-
-```bash
-docker compose up --build
-```
-
-### Stop the containers
-
-```bash
-docker compose down
-```
-
-## Running tests
-
-### API / UI tests locally
-
-#### Run tests from the repo root.
+### Root test harness
 
 ```bash
 npm install
 npm run test:e2e
-npm run test:e2e:headed
-npm run test:e2e:ui
 ```
 
-#### Run tests against the Dockerized app
+### Other available commands
+
+```bash
+npm run test:e2e:ui
+npm run test:e2e:headed
+npm run test:e2e:debug
+```
+
+### Run against Dockerized app
 
 ```bash
 npm run docker:test:up
@@ -255,8 +202,57 @@ npm run test:docker
 npm run docker:test:down
 ```
 
-or
+### Running locally
+
+You need to run both the backend and the frontend.
+
+Before starting locally, configure the API environment:
+
+```text
+DATABASE_URL=your_dev_database_url
+TEST_DATABASE_URL=your_test_database_url
+```
+
+### Terminal 1 — API
 
 ```bash
-npm run test:docker:fresh
+cd api
+npm install
+npm run dev
 ```
+
+### Terminal 2 — Web
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+Then open the frontend URL shown in the terminal.
+
+## Run with Docker
+
+```bash
+docker compose up --build
+```
+
+Stop containers with:
+
+```bash
+docker compose down
+```
+
+## Deployment
+
+**Frontend**: Render Static Site
+**Backend**: Render Web Service
+**Database**: Neon PostgreSQL
+
+## CI
+
+GitHub Actions runs the Playwright suite on push and pull request.
+
+## Notes
+
+Hosted on free-tier infrastructure, so the first request may be slower due to cold starts.
