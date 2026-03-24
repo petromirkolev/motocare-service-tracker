@@ -2,7 +2,7 @@
 
 MotoCare Service Tracker is a full-stack motorcycle service workflow app built as a QA Automation portfolio project. It focuses on service-job lifecycle management, backend-driven state transitions, filtering, persistence, and end-to-end reliability.
 
-**Live app:** https://motocare-service-tracker.onrender.com/
+**Live app:** https://motocareservice.petromirkolev.com/
 
 ---
 
