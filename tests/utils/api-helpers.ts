@@ -1,7 +1,14 @@
 import { API_URL, PASSWORD } from './constants';
 import { expect, APIRequestContext, APIResponse } from '@playwright/test';
 import type { LoginResponse } from '../types/login';
-import { JobResponse } from '../types/job';
+
+type AddBike = {
+  make: string;
+  model: string;
+  year: number;
+};
+
+type AddJob = {};
 
 export async function registerUserApi(
   request: APIRequestContext,
@@ -74,18 +81,11 @@ export async function loginUser(
 export async function addBikeApi(
   request: APIRequestContext,
   user_id: string,
-  overrides: Partial<{
-    make: string;
-    model: string;
-    year: number;
-  }> = {},
+  overrides: Partial<AddBike> = {},
 ): Promise<APIResponse> {
   const response = await request.post(`${API_URL}/bikes`, {
     data: {
       user_id,
-      make: 'Yamaha',
-      model: 'Tracer 9GT',
-      year: 2021,
       ...overrides,
     },
   });
@@ -121,7 +121,7 @@ export async function addBike(
   return body.bike.id;
 }
 
-export async function listBikes(
+export async function listBikesApi(
   request: APIRequestContext,
   user_id: string,
 ): Promise<any[]> {
@@ -133,69 +133,59 @@ export async function listBikes(
   return body.bikes;
 }
 
-export async function deleteBike(
+export async function deleteBikeApi(
   request: APIRequestContext,
   bike_id: string,
   user_id: string,
-): Promise<void> {
+): Promise<APIResponse> {
   const response = await request.delete(
     `${API_URL}/bikes/${bike_id}?user_id=${user_id}`,
   );
 
-  expect(response.status()).toBe(200);
-
-  const body = await response.json();
-  expect(body.message).toBe('Bike deleted successfully');
+  return response;
 }
 
-export async function addJob(
+export async function addJobApi(
   request: APIRequestContext,
-  bike_id: string,
-  user_id: string,
+  bike_id?: string,
+  user_id?: string,
   overrides: Partial<{
-    service_type: string;
-    odometer: number;
-    note: string;
+    service_type: 'Oil change' | 'Coolant change';
+    odometer: number | string;
+    note: 'Change the oil' | 'Change the coolant';
   }> = {},
-): Promise<JobResponse> {
-  const response = await request.post(`${API_URL}/jobs?user_id=${user_id}`, {
+): Promise<APIResponse> {
+  const query = user_id ? `?user_id=${user_id}` : '';
+
+  const response = await request.post(`${API_URL}/jobs${query}`, {
     data: {
       bike_id,
-      service_type: 'Oil Change',
-      odometer: 24500,
-      note: 'Change the oil',
+      ...overrides,
     },
   });
 
-  expect(response.status()).toBe(201);
-
-  const body = await response.json();
-  expect(body.message).toBe('Job created successfully');
-
-  return body;
+  return response;
 }
 
-export async function listJobs(
+export async function listJobsApi(
   request: APIRequestContext,
   user_id: string,
-): Promise<any[]> {
+): Promise<APIResponse> {
   const response = await request.get(`${API_URL}/jobs?user_id=${user_id}`);
 
-  expect(response.status()).toBe(200);
-
-  const body = await response.json();
-
-  return body.jobs;
+  return response;
 }
 
-export async function updateJob(
+export async function updateJobApi(
   request: APIRequestContext,
-  id: string,
-  user_id: string,
-  status: string,
-): Promise<void> {
+  id?: string,
+  user_id?: string,
+  status?: string,
+): Promise<APIResponse> {
+  const query = id ? id : '';
+
   const response = await request.patch(
-    `${API_URL}/jobs/${id}/status?user_id=${user_id}`,
+    `${API_URL}/jobs/${query}/status?user_id=${user_id}`,
     {
       data: {
         status,
@@ -203,9 +193,5 @@ export async function updateJob(
     },
   );
 
-  expect(response.status()).toBe(200);
-
-  const body = await response.json();
-
-  expect(body.message).toBe('Job status updated successfully');
+  return response;
 }
