@@ -210,7 +210,6 @@ test.describe('Jobs API', () => {
     test('Update non-existing job is rejected', async ({
       request,
       loginResult,
-      garageWithBike,
     }) => {
       const response = await updateJobApi(
         request,
