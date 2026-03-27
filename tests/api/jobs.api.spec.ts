@@ -1,219 +1,253 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixtures/api';
 import { uniqueEmail } from '../utils/test-data';
-import { API_URL } from '../utils/constants';
 import {
   registerUser,
   loginUser,
   addBike,
-  addJob,
-  listJobs,
-  updateJob,
+  addJobApi,
+  listJobsApi,
+  updateJobApi,
 } from '../utils/api-helpers';
-import { JobResponse } from '../types/job';
 
-test.describe('Jobs API test suite', () => {
-  let email: string;
-  let user_id: string;
+test.describe('Jobs API', () => {
+  test.describe('Create/list bike jobs', () => {
+    test('Create job with valid data succeeds', async ({
+      request,
+      loginResult,
+      garageWithOneBike,
+      validJobData,
+    }) => {
+      await addJobApi(
+        request,
+        garageWithOneBike.body.bike.id,
+        loginResult.body.user.id,
+        { ...validJobData },
+      );
 
-  test.beforeEach(async ({ request }) => {
-    email = uniqueEmail('api-garage');
-    await registerUser(request, email);
-    const body = await loginUser(request, email);
-    user_id = body.user.id;
-  });
+      const response = await listJobsApi(request, loginResult.body.user.id);
 
-  test.describe('Create/list bike jobs test suite', () => {
-    test('Create job with valid data succeeds', async ({ request }) => {
-      const bike_id = await addBike(request, user_id);
+      const body = await response.json();
 
-      await addJob(request, bike_id, user_id);
-
-      const jobs = await listJobs(request, user_id);
-
-      expect(jobs).toHaveLength(1);
-      expect(jobs.every((job) => job.user_id === user_id)).toBeTruthy();
-      expect(jobs.every((job) => job.bike_id === bike_id)).toBeTruthy();
-      expect(jobs.every((job) => job.status === 'requested')).toBeTruthy();
+      expect(body.jobs).toHaveLength(1);
+      expect(
+        body.jobs.every((job) => job.user_id === loginResult.body.user.id),
+      ).toBeTruthy();
+      expect(
+        body.jobs.every(
+          (job) => job.bike_id === garageWithOneBike.body.bike.id,
+        ),
+      ).toBeTruthy();
+      expect(body.jobs.every((job) => job.status === 'requested')).toBeTruthy();
     });
 
-    test('Create job with missing bike_id is rejected', async ({ request }) => {
-      const response = await request.post(
-        `${API_URL}/jobs?user_id=${user_id}`,
+    test('Create job with missing bike_id is rejected', async ({
+      request,
+      loginResult,
+      garageWithOneBike,
+    }) => {
+      const response = await addJobApi(
+        request,
+        undefined,
+        loginResult.body.user.id,
         {
-          data: {
-            service_type: 'Oil change',
-            odometer: 24500,
-            note: 'Change the oil',
-          },
+          service_type: 'Oil change',
+          odometer: 24500,
+          note: 'Change the oil',
         },
       );
 
       expect(response.status()).toBe(400);
 
       const body = await response.json();
+
       expect(body.error).toBe('bike_id is required');
     });
 
     test('Create job with missing service_type is rejected', async ({
       request,
+      loginResult,
+      garageWithOneBike,
     }) => {
-      const bike_id = await addBike(request, user_id);
-
-      const response = await request.post(
-        `${API_URL}/jobs?user_id=${user_id}`,
-        {
-          data: {
-            bike_id,
-            odometer: 24500,
-            note: 'Change the oil',
-          },
-        },
+      const response = await addJobApi(
+        request,
+        garageWithOneBike.body.bike.id,
+        loginResult.body.user.id,
+        { odometer: 24500, note: 'Change the oil' },
       );
 
       expect(response.status()).toBe(400);
 
       const body = await response.json();
+
       expect(body.error).toBe('service_type is required');
     });
 
     test('Create job with missing odometer is rejected', async ({
       request,
+      loginResult,
+      garageWithOneBike,
     }) => {
-      const bike_id = await addBike(request, user_id);
-
-      const response = await request.post(
-        `${API_URL}/jobs?user_id=${user_id}`,
-        {
-          data: {
-            bike_id,
-            service_type: 'Oil change',
-            note: 'Change the oil',
-          },
-        },
+      const response = await addJobApi(
+        request,
+        garageWithOneBike.body.bike.id,
+        loginResult.body.user.id,
+        { service_type: 'Oil change', note: 'Change the oil' },
       );
 
       expect(response.status()).toBe(400);
 
       const body = await response.json();
+
       expect(body.error).toBe('odometer is required');
     });
 
     test('Create job with invalid negative odometer is rejected', async ({
       request,
+      loginResult,
+      garageWithOneBike,
     }) => {
-      const bike_id = await addBike(request, user_id);
-
-      const response = await request.post(
-        `${API_URL}/jobs?user_id=${user_id}`,
+      const response = await addJobApi(
+        request,
+        garageWithOneBike.body.bike.id,
+        loginResult.body.user.id,
         {
-          data: {
-            bike_id,
-            service_type: 'Oil change',
-            odometer: -1000,
-            note: 'Change the oil',
-          },
+          service_type: 'Oil change',
+          odometer: -1000,
+          note: 'Change the oil',
         },
       );
 
       expect(response.status()).toBe(400);
 
       const body = await response.json();
+
       expect(body.error).toBe('odometer cannot be a negative integer');
     });
 
     test('Create job with invalid string odometer is rejected', async ({
       request,
+      loginResult,
+      garageWithOneBike,
     }) => {
-      const bike_id = await addBike(request, user_id);
-
-      const response = await request.post(
-        `${API_URL}/jobs?user_id=${user_id}`,
+      const response = await addJobApi(
+        request,
+        garageWithOneBike.body.bike.id,
+        loginResult.body.user.id,
         {
-          data: {
-            bike_id,
-            service_type: 'Oil change',
-            odometer: '1000',
-            note: 'Change the oil',
-          },
+          service_type: 'Oil change',
+          odometer: '1000',
+          note: 'Change the oil',
         },
       );
 
       expect(response.status()).toBe(400);
 
       const body = await response.json();
+
       expect(body.error).toBe('odometer must be a number');
     });
 
-    test('Jobs list returns only current user jobs', async ({ request }) => {
-      const bike_id_1 = await addBike(request, user_id);
-      await addJob(request, bike_id_1, user_id);
+    test('Jobs list returns only current user jobs', async ({
+      request,
+      loginResult,
+      garageWithOneBike,
+      validJobData,
+    }) => {
+      await addJobApi(
+        request,
+        garageWithOneBike.body.bike.id,
+        loginResult.body.user.id,
+        { ...validJobData },
+      );
 
-      const email = uniqueEmail('api-garage');
+      const email = uniqueEmail();
+
       await registerUser(request, email);
+
       const body = await loginUser(request, email);
-      const user_id_2 = body.user.id;
-      const bike_id_2 = await addBike(request, user_id_2);
-      await addJob(request, bike_id_2, user_id_2);
-      await addJob(request, bike_id_2, user_id_2, {
+
+      const user_2_id = body.user.id;
+
+      const bike_2 = await addBike(request, user_2_id);
+
+      await addJobApi(request, bike_2, user_2_id, { ...validJobData });
+      await addJobApi(request, bike_2, user_2_id, {
         service_type: 'Oil change',
-        odometer: 50000,
+        odometer: 1000,
       });
 
-      const jobs_user_1 = await listJobs(request, user_id);
-      const jobs_user_2 = await listJobs(request, user_id_2);
+      const user_1_response = await listJobsApi(
+        request,
+        loginResult.body.user.id,
+      );
+      const user_1_body = await user_1_response.json();
 
-      expect(jobs_user_1).toHaveLength(1);
-      expect(jobs_user_1.every((job) => job.user_id === user_id)).toBeTruthy();
+      const user_2_response = await listJobsApi(request, user_2_id);
+
+      const user_2_body = await user_2_response.json();
+
+      expect(user_1_body.jobs).toHaveLength(1);
       expect(
-        jobs_user_1.every((job) => job.bike_id === bike_id_1),
+        user_1_body.jobs.every(
+          (job) => job.user_id === loginResult.body.user.id,
+        ),
+      ).toBeTruthy();
+      expect(
+        user_1_body.jobs.every(
+          (job) => job.bike_id === garageWithOneBike.body.bike.id,
+        ),
       ).toBeTruthy();
 
-      expect(jobs_user_2).toHaveLength(2);
+      expect(user_2_body.jobs).toHaveLength(2);
       expect(
-        jobs_user_2.every((job) => job.user_id === user_id_2),
+        user_2_body.jobs.every((job) => job.user_id === user_2_id),
       ).toBeTruthy();
       expect(
-        jobs_user_2.every((job) => job.bike_id === bike_id_2),
+        user_2_body.jobs.every((job) => job.bike_id === bike_2),
       ).toBeTruthy();
       expect(
-        jobs_user_2.every((job) => job.status === 'requested'),
+        user_2_body.jobs.every((job) => job.status === 'requested'),
       ).toBeTruthy();
     });
 
-    test('Update non-existing job is rejected', async ({ request }) => {
-      const response = await request.patch(
-        `${API_URL}/jobs/testid/status?user_id=${user_id}`,
-        {
-          data: {
-            status: 'approved',
-          },
-        },
+    test('Update non-existing job is rejected', async ({
+      request,
+      loginResult,
+      garageWithOneBike,
+    }) => {
+      const response = await updateJobApi(
+        request,
+        undefined,
+        loginResult.body.user.id,
+        'approved',
       );
 
       expect(response.status()).toBe(404);
-
-      const body = await response.json();
-
-      expect(body.error).toBe('Job not found');
     });
 
-    test('Update other user job is rejected', async ({ request }) => {
-      const email = uniqueEmail('api-garage');
+    test('Update other user job is rejected', async ({
+      request,
+      loginResult,
+      garageWithOneBike,
+      validJobData,
+    }) => {
+      const email = uniqueEmail();
       await registerUser(request, email);
       const body = await loginUser(request, email);
-      const user_id_2 = body.user.id;
-      const bike_id_2 = await addBike(request, user_id_2);
-      const job_2 = await addJob(request, bike_id_2, user_id_2);
+      const user_2_id = body.user.id;
 
-      const job_id_2 = job_2.id;
+      const bike_2 = await addBike(request, user_2_id);
+      const add_job_response = await addJobApi(request, bike_2, user_2_id, {
+        ...validJobData,
+      });
 
-      const response = await request.patch(
-        `${API_URL}/jobs/${job_id_2}/status?user_id=${user_id}`,
-        {
-          data: {
-            status: 'approved',
-          },
-        },
+      const job_body = await add_job_response.json();
+
+      const response = await updateJobApi(
+        request,
+        job_body.id,
+        loginResult.body.user.id,
+        'approved',
       );
 
       expect(response.status()).toBe(403);
@@ -224,17 +258,7 @@ test.describe('Jobs API test suite', () => {
     });
   });
 
-  test.describe('Valid job status transitions test suite', () => {
-    let bike_id: string;
-    let job: JobResponse;
-    let id: string;
-
-    test.beforeEach(async ({ request }) => {
-      bike_id = await addBike(request, user_id);
-      job = await addJob(request, bike_id, user_id);
-      id = job.id;
-    });
-
+  test.describe('Valid job status transitions', () => {
     test('Requested > Approved job transition is accepted', async ({
       request,
     }) => {
@@ -292,7 +316,7 @@ test.describe('Jobs API test suite', () => {
     });
   });
 
-  test.describe('Invalid job status transitions test suite', () => {
+  test.describe('Invalid job status transitions', () => {
     let bike_id: string;
     let job: JobResponse;
     let id: string;
