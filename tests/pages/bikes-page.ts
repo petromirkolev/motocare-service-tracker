@@ -15,6 +15,7 @@ export class BikesPage {
   readonly bikesList: Locator;
   readonly bikeCount: Locator;
   readonly bikeTag: Locator;
+  readonly logoutButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -31,6 +32,7 @@ export class BikesPage {
     this.bikesList = page.getByTestId('list-bikes');
     this.bikeCount = page.getByTestId('text-bike-count');
     this.bikeTag = page.getByTestId('bike-tag');
+    this.logoutButton = page.getByTestId('btn-logout-topbar');
   }
 
   async addBike({ make, model, year }): Promise<void> {

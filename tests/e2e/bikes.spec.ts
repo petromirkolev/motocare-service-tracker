@@ -1,166 +1,163 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../pages/login-page';
-import { RegisterPage } from '../pages/register-page';
-import { validInput, uniqueEmail } from '../utils/test-data';
-import { BikesPage } from '../pages/bikes-page';
-import { JobsPage } from '../pages/jobs-page';
+import { test, expect, uniqueEmail, validInput } from '../fixtures/bikes';
 
-function seededBike() {
-  const suffix = Date.now().toString();
-  return {
-    make: `Yamaha-${suffix}`,
-    model: `Tracer-9GT-${suffix}`,
-    year: '2021',
-  };
-}
-
-test.describe('Bikes test suite', () => {
-  let loginPage: LoginPage;
-  let bikePage: BikesPage;
-  let registerPage: RegisterPage;
-  let jobsPage: JobsPage;
-  let email: string;
-  let password: string;
-
-  test.beforeEach(async ({ page }) => {
-    loginPage = new LoginPage(page);
-    bikePage = new BikesPage(page);
-    registerPage = new RegisterPage(page);
-    jobsPage = new JobsPage(page);
-
-    email = uniqueEmail('login-seeded');
-    password = validInput.password;
-
-    await registerPage.gotoreg();
-    await registerPage.register(email, password);
-    await registerPage.expectSuccess('Registration successful!');
-
-    await loginPage.goto();
-    await loginPage.login(email, password);
+test.describe('Bikes', () => {
+  test('User can add bike successfully', async ({
+    loggedInUser,
+    seededBike,
+    bikesPage,
+  }) => {
+    await bikesPage.addBike(seededBike);
+    await bikesPage.expectBikeVisible(seededBike.make);
   });
 
-  test('User can add bike successfully', async () => {
-    const bike = seededBike();
+  test('Bike persists after page refresh', async ({
+    loggedInUser,
+    seededBike,
+    bikesPage,
+  }) => {
+    await bikesPage.addBike(seededBike);
+    await bikesPage.expectBikeVisible(seededBike.make);
 
-    await bikePage.addBike(bike);
-    await bikePage.expectBikeVisible(bike.make);
+    await bikesPage.page.reload();
+
+    await bikesPage.expectBikeVisible(seededBike.make);
   });
 
-  test('Bike persists after page refresh', async ({ page }) => {
-    const bike = seededBike();
+  test('Bike count updates after adding a bike', async ({
+    loggedInUser,
+    seededBike,
+    bikesPage,
+  }) => {
+    await bikesPage.addBike(seededBike);
+    await bikesPage.expectBikeVisible(seededBike.make);
 
-    await bikePage.addBike(bike);
-    await bikePage.expectBikeVisible(bike.make);
-
-    await page.reload();
-
-    await bikePage.expectBikeVisible(bike.make);
+    await expect(bikesPage.bikeCount).toHaveText('1 motorcycle');
   });
 
-  test('Bike count updates after adding a bike', async () => {
-    const bike = seededBike();
-
-    await bikePage.addBike(bike);
-    await bikePage.expectBikeVisible(bike.make);
-    await expect(bikePage.bikeCount).toHaveText('1 motorcycle');
-  });
-
-  test('Add bike with empty make is rejected', async () => {
-    await bikePage.addBike({
+  test('Add bike with empty make is rejected', async ({
+    loggedInUser,
+    bikesPage,
+  }) => {
+    await bikesPage.addBike({
       make: '',
       model: 'Tracer 9GT',
       year: '2021',
     });
 
-    await bikePage.expectError('Make is required');
+    await bikesPage.expectError('Make is required');
   });
 
-  test('Add bike with empty model is rejected', async () => {
-    await bikePage.addBike({
+  test('Add bike with empty model is rejected', async ({
+    loggedInUser,
+    bikesPage,
+  }) => {
+    await bikesPage.addBike({
       make: 'Yamaha',
       model: '',
       year: '2021',
     });
 
-    await bikePage.expectError('Model is required');
+    await bikesPage.expectError('Model is required');
   });
 
-  test('Add bike with empty year is rejected', async () => {
-    await bikePage.addBike({
+  test('Add bike with empty year is rejected', async ({
+    loggedInUser,
+    bikesPage,
+  }) => {
+    await bikesPage.addBike({
       make: 'Yamaha',
       model: 'Tracer 9GT',
       year: '',
     });
 
-    await bikePage.expectError('Invalid year');
+    await bikesPage.expectError('Invalid year');
   });
 
-  test('Add bike with year below allowed range is rejected', async () => {
-    await bikePage.addBike({
+  test('Add bike with year below allowed range is rejected', async ({
+    loggedInUser,
+    bikesPage,
+  }) => {
+    await bikesPage.addBike({
       make: 'Yamaha',
       model: 'Tracer 9GT',
       year: '1899',
     });
 
-    await bikePage.expectError('Invalid year');
+    await bikesPage.expectError('Invalid year');
   });
 
-  test('Add bike with year above allowed range is rejected', async () => {
-    await bikePage.addBike({
+  test('Add bike with year above allowed range is rejected', async ({
+    loggedInUser,
+    bikesPage,
+  }) => {
+    await bikesPage.addBike({
       make: 'Yamaha',
       model: 'Tracer 9GT',
       year: '2101',
     });
 
-    await bikePage.expectError('Invalid year');
+    await bikesPage.expectError('Invalid year');
   });
 
-  test('User can delete bike successfully', async () => {
-    const bike = seededBike();
+  test('User can delete bike successfully', async ({
+    loggedInUser,
+    seededBike,
+    bikesPage,
+  }) => {
+    await bikesPage.addBike(seededBike);
+    await bikesPage.expectBikeVisible(seededBike.make);
 
-    await bikePage.addBike(bike);
-    await bikePage.expectBikeVisible(bike.make);
-
-    await bikePage.deleteBikeByName(bike.make);
-
-    await bikePage.expectBikeNotVisible(bike.make);
+    await bikesPage.deleteBikeByName(seededBike.make);
+    await bikesPage.expectBikeNotVisible(seededBike.make);
   });
 
-  test('Bike delete persists after refresh', async ({ page }) => {
-    const bike = seededBike();
+  test('Bike delete persists after refresh', async ({
+    loggedInUser,
+    seededBike,
+    bikesPage,
+  }) => {
+    await bikesPage.addBike(seededBike);
 
-    await bikePage.addBike(bike);
+    await bikesPage.deleteBikeByName(seededBike.make);
+    await bikesPage.expectBikeNotVisible(seededBike.make);
 
-    await bikePage.deleteBikeByName(bike.make);
-    await bikePage.expectBikeNotVisible(bike.make);
+    await bikesPage.page.reload();
 
-    await page.reload();
-
-    await bikePage.expectBikeNotVisible(bike.make);
+    await bikesPage.expectBikeNotVisible(seededBike.make);
   });
 
-  test('Empty state is shown when user has no added bikes', async () => {
-    await expect(bikePage.emptyBikeScreen).toBeVisible();
-    await expect(bikePage.bikesList).toBeHidden();
+  test('Empty state is shown when user has no added bikes', async ({
+    loggedInUser,
+    bikesPage,
+  }) => {
+    await expect(bikesPage.emptyBikeScreen).toBeVisible();
+    await expect(bikesPage.bikesList).toBeHidden();
   });
 
-  test('Empty state is not shown after adding first bike', async () => {
-    const bike = seededBike();
+  test('Empty state is not shown after adding first bike', async ({
+    loggedInUser,
+    seededBike,
+    bikesPage,
+  }) => {
+    await bikesPage.addBike(seededBike);
 
-    await bikePage.addBike(bike);
-    await bikePage.expectBikeVisible(bike.make);
+    await bikesPage.expectBikeVisible(seededBike.make);
 
-    await expect(bikePage.bikesList).toBeVisible();
-    await expect(bikePage.emptyBikeScreen).toBeHidden();
+    await expect(bikesPage.bikesList).toBeVisible();
+    await expect(bikesPage.emptyBikeScreen).toBeHidden();
   });
 
-  test('User sees his own bikes only', async ({ page }) => {
-    const bike = seededBike();
+  test('User sees his own bikes only', async ({
+    loggedInUser,
+    seededBike,
+    bikesPage,
+    registerPage,
+    loginPage,
+  }) => {
+    await bikesPage.addBike(seededBike);
+    await bikesPage.expectBikeVisible(seededBike.make);
 
-    await bikePage.addBike(bike);
-    await bikePage.expectBikeVisible(bike.make);
-
-    await page.getByTestId('btn-logout-topbar').click();
+    await bikesPage.logoutButton.click();
 
     await registerPage.gotoreg();
 
@@ -173,84 +170,107 @@ test.describe('Bikes test suite', () => {
     await loginPage.goto();
     await loginPage.login(email, password);
 
-    await bikePage.expectBikeNotVisible(bike.make);
+    await bikesPage.expectBikeNotVisible(seededBike.make);
   });
 
-  test('Bike shows "Ready" when it has no open jobs', async () => {
-    const bike = seededBike();
+  test('Bike shows "Ready" when it has no open jobs', async ({
+    loggedInUser,
+    seededBike,
+    bikesPage,
+  }) => {
+    await bikesPage.addBike(seededBike);
+    await bikesPage.expectBikeVisible(seededBike.make);
 
-    await bikePage.addBike(bike);
-    await bikePage.expectBikeVisible(bike.make);
-
-    await expect(bikePage.bikeTag).toHaveText('Ready');
+    await expect(bikesPage.bikeTag).toHaveText('Ready');
   });
 
-  test('Bike shows "Not ready" when it has open jobs', async () => {
-    const bike = seededBike();
+  test('Bike shows "Not ready" when it has open jobs', async ({
+    loggedInUser,
+    seededBike,
+    bikesPage,
+    jobsPage,
+  }) => {
+    await bikesPage.addBike(seededBike);
+    await bikesPage.expectBikeVisible(seededBike.make);
 
-    await bikePage.addBike(bike);
-    await bikePage.expectBikeVisible(bike.make);
-
-    await expect(bikePage.bikeTag).toHaveText('Ready');
+    await expect(bikesPage.bikeTag).toHaveText('Ready');
 
     await jobsPage.gotoJobsPage();
 
-    await jobsPage.addJob('Oil Change', `${bike.make} ${bike.model}`, '20000');
+    await jobsPage.addJob(
+      'Oil Change',
+      `${seededBike.make} ${seededBike.model}`,
+      '20000',
+    );
 
-    await bikePage.gotoBikesPage();
+    await bikesPage.gotoBikesPage();
 
-    await expect(bikePage.bikeTag).toHaveText('Not ready');
+    await expect(bikesPage.bikeTag).toHaveText('Not ready');
   });
 
-  test('Bike shows "Ready" when open job is done', async () => {
-    const bike = seededBike();
+  test('Bike shows "Ready" when open job is done', async ({
+    loggedInUser,
+    seededBike,
+    bikesPage,
+    jobsPage,
+  }) => {
+    await bikesPage.addBike(seededBike);
+    await bikesPage.expectBikeVisible(seededBike.make);
 
-    await bikePage.addBike(bike);
-    await bikePage.expectBikeVisible(bike.make);
-
-    await expect(bikePage.bikeTag).toHaveText('Ready');
-
-    await jobsPage.gotoJobsPage();
-
-    await jobsPage.addJob('Oil Change', `${bike.make} ${bike.model}`, '20000');
-
-    await bikePage.gotoBikesPage();
-
-    await expect(bikePage.bikeTag).toHaveText('Not ready');
+    await expect(bikesPage.bikeTag).toHaveText('Ready');
 
     await jobsPage.gotoJobsPage();
 
-    await bikePage.pageJobs.getByTestId('btn-job-approve').click();
-    await bikePage.pageJobs.getByTestId('btn-job-start').click();
-    await bikePage.pageJobs.getByTestId('btn-job-complete').click();
+    await jobsPage.addJob(
+      'Oil Change',
+      `${seededBike.make} ${seededBike.model}`,
+      '20000',
+    );
 
-    await bikePage.gotoBikesPage();
+    await bikesPage.gotoBikesPage();
 
-    await expect(bikePage.bikeTag).toHaveText('Ready');
+    await expect(bikesPage.bikeTag).toHaveText('Not ready');
+
+    await jobsPage.gotoJobsPage();
+
+    await bikesPage.pageJobs.getByTestId('btn-job-approve').click();
+    await bikesPage.pageJobs.getByTestId('btn-job-start').click();
+    await bikesPage.pageJobs.getByTestId('btn-job-complete').click();
+
+    await bikesPage.gotoBikesPage();
+
+    await expect(bikesPage.bikeTag).toHaveText('Ready');
   });
 
-  test('Bike shows "Ready" when open job is cancelled', async () => {
-    const bike = seededBike();
+  test('Bike shows "Ready" when open job is cancelled', async ({
+    loggedInUser,
+    seededBike,
+    bikesPage,
+    jobsPage,
+  }) => {
+    await bikesPage.addBike(seededBike);
+    await bikesPage.expectBikeVisible(seededBike.make);
 
-    await bikePage.addBike(bike);
-    await bikePage.expectBikeVisible(bike.make);
-
-    await expect(bikePage.bikeTag).toHaveText('Ready');
-
-    await jobsPage.gotoJobsPage();
-
-    await jobsPage.addJob('Oil Change', `${bike.make} ${bike.model}`, '20000');
-
-    await bikePage.gotoBikesPage();
-
-    await expect(bikePage.bikeTag).toHaveText('Not ready');
+    await expect(bikesPage.bikeTag).toHaveText('Ready');
 
     await jobsPage.gotoJobsPage();
 
-    await bikePage.pageJobs.getByTestId('btn-job-cancel').click();
+    await jobsPage.addJob(
+      'Oil Change',
+      `${seededBike.make} ${seededBike.model}`,
+      '20000',
+    );
 
-    await bikePage.gotoBikesPage();
+    await bikesPage.gotoBikesPage();
 
-    await expect(bikePage.bikeTag).toHaveText('Ready');
+    await expect(bikesPage.bikeTag).toHaveText('Not ready');
+
+    await jobsPage.gotoJobsPage();
+
+    await bikesPage.pageJobs.getByTestId('btn-job-cancel').click();
+
+    await bikesPage.gotoBikesPage();
+
+    await expect(bikesPage.bikeTag).toHaveText('Ready');
   });
 });
