@@ -22,13 +22,14 @@ export const test = base.extend<AuthFixtures>({
     await use({ email, password });
   },
 
-  registeredUser: async ({ request }, use) => {
-    const email = uniqueEmail();
-    const password = validInput.password;
+  registeredUser: async ({ request, registrationData }, use) => {
+    await registerUser(
+      request,
+      registrationData.email,
+      registrationData.password,
+    );
 
-    await registerUser(request, email, password);
-
-    await use({ email, password });
+    await use(registrationData);
   },
 });
 

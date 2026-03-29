@@ -18,6 +18,7 @@ type ApiFixtures = {
   };
 
   loginResult: {
+    response: APIResponse;
     body: LoginResponse;
   };
 
@@ -39,6 +40,7 @@ type ApiFixtures = {
 
   bikeWithOneJob: {
     job: JobResponse;
+    user_id: string;
   };
 };
 
@@ -61,7 +63,7 @@ export const test = base.extend<ApiFixtures>({
 
     const body = (await response.json()) as LoginResponse;
 
-    await use({ body });
+    await use({ response, body });
   },
 
   garageWithBike: async ({ request, loginResult, validBikeData }, use) => {
@@ -78,6 +80,8 @@ export const test = base.extend<ApiFixtures>({
     { request, loginResult, garageWithBike, validJobData },
     use,
   ) => {
+    const user_id = loginResult.body.user.id;
+
     const jobResponse = await addJobApi(
       request,
       garageWithBike.body.bike.id,
@@ -87,7 +91,7 @@ export const test = base.extend<ApiFixtures>({
 
     const job = await jobResponse.json();
 
-    await use({ job });
+    await use({ job, user_id });
   },
 
   validBikeData: async ({}, use) => {
