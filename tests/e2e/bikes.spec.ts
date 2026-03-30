@@ -1,4 +1,5 @@
-import { test, expect, uniqueEmail, validInput } from '../fixtures/bikes';
+import { test, expect } from '../fixtures/bikes';
+import { uniqueEmail, validInput } from '../utils/test-data';
 
 test.describe('Bikes', () => {
   test('User can add bike successfully', async ({
