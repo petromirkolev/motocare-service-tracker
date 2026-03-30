@@ -47,6 +47,9 @@ export const test = base.extend<BikeFixtures>({
 
     await bikesPage.addBike(bike);
 
+    await bikesPage.expectBikeVisible(bike.make);
+    await expect(bikesPage.pageBikes).toBeVisible();
+
     await use(bike);
   },
 });

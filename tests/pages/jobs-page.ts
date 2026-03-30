@@ -40,7 +40,13 @@ export class JobsPage {
   }
 
   async gotoJobsPage(): Promise<void> {
+    await this.page.evaluate(() => window.scrollTo(0, 0));
+    await expect(this.jobsNav).toBeVisible();
+    await expect(this.jobsNav).toBeEnabled();
+    await expect(this.pageBikes).toBeVisible();
+
     await this.jobsNav.click();
+
     await expect(this.pageJobs).toBeVisible();
     await expect(this.pageBikes).toBeHidden();
   }
