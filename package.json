@@ -8,7 +8,7 @@
     "db:up": "docker compose up -d postgres",
     "db:down": "docker compose stop postgres",
     "db:test:reset": "node tests/scripts/reset-test-db.js",
-    "test:local": "npm run db:up && npm run db:test:reset && playwright test --config=playwright.local.config.ts --reporter=list",
+    "test:local": "npm run db:up && npm run db:test:reset && playwright test --config=playwright.local.config.ts",
     "test:local:ui": "npm run db:up && npm run db:test:reset && playwright test --config=playwright.local.config.ts --ui",
     "test:local:allure": "playwright test -c playwright.local.config.ts && npx allure generate allure-results --clean -o allure-report",
     "docker:test:up": "docker compose -f docker-compose.yml -f docker-compose.test.yml up --build -d",
