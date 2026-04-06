@@ -177,6 +177,8 @@ The project includes both Playwright E2E tests and Playwright API tests.
 - filtering-related behavior
 - integrity rules
 
+At the time of writing, the suite contains **90 Playwright tests** (270 executions across Chromium, Firefox, and WebKit).
+
 ## How tests are run
 
 Playwright is initialized at the repo root because tests target the whole system, not just the frontend.
