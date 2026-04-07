@@ -15,7 +15,7 @@ test.describe('Jobs', () => {
       await jobsPage.expectJobVisible(seededJob.service);
     });
 
-    test.only('Created job persists after page reload', async ({
+    test('Created job persists after page reload', async ({
       seededJob,
       jobsPage,
     }) => {
