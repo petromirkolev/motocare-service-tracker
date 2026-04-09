@@ -1,19 +1,21 @@
 import {
   test,
-  expect,
   uniqueEmail,
   registerUserApi,
   loginUserApi,
 } from '../fixtures/api';
+import { msg } from '../utils/constants';
+import { expectApiError, expectApiSuccess } from '../utils/response-helpers';
 
 test.describe('Auth API', () => {
   test('Register with valid credentials succeeds', async ({
     registrationResult,
   }) => {
-    expect(registrationResult.response.status()).toBe(201);
-
-    const body = await registrationResult.response.json();
-    expect(body.message).toBe('User registered successfully');
+    await expectApiSuccess(
+      registrationResult.response,
+      201,
+      msg.USER_REG_SUCCESS,
+    );
   });
 
   test('Register with duplicate email is rejected', async ({
@@ -25,46 +27,31 @@ test.describe('Auth API', () => {
       registrationResult.email,
     );
 
-    expect(duplicateResponse.status()).toBe(409);
-
-    const duplicateBody = await duplicateResponse.json();
-    expect(duplicateBody.error).toBe('User already exists');
+    await expectApiError(duplicateResponse, 409, msg.USER_EXISTS);
   });
 
   test('Register with invalid email is rejected', async ({ request }) => {
     const response = await registerUserApi(request, '##@abv.bg');
 
-    expect(response.status()).toBe(400);
-
-    const body = await response.json();
-    expect(body.error).toBe('Invalid email format');
+    await expectApiError(response, 400, msg.EMAIL_INVALID);
   });
 
   test('Register with missing email is rejected', async ({ request }) => {
     const response = await registerUserApi(request, '');
 
-    expect(response.status()).toBe(400);
-
-    const body = await response.json();
-    expect(body.error).toBe('Email and password are required');
+    await expectApiError(response, 400, msg.EMAIL_PASSWORD_REQUIRED);
   });
 
   test('Register with missing password is rejected', async ({ request }) => {
     const response = await registerUserApi(request, uniqueEmail(), '');
 
-    expect(response.status()).toBe(400);
-
-    const body = await response.json();
-    expect(body.error).toBe('Email and password are required');
+    await expectApiError(response, 400, msg.EMAIL_PASSWORD_REQUIRED);
   });
 
   test('Register with short password is rejected', async ({ request }) => {
     const response = await registerUserApi(request, uniqueEmail(), 'test');
 
-    expect(response.status()).toBe(400);
-
-    const body = await response.json();
-    expect(body.error).toBe('Password must be at least 8 characters');
+    await expectApiError(response, 400, msg.PASSWORD_MIN_LENGTH);
   });
 
   test('Register with long password is rejected', async ({ request }) => {
@@ -74,17 +61,11 @@ test.describe('Auth API', () => {
       'testingthesuperlongpasswordtwotimestestingthesuperlongpasswordtwotimes',
     );
 
-    expect(response.status()).toBe(400);
-
-    const body = await response.json();
-    expect(body.error).toBe('Password must be 32 characters at most');
+    await expectApiError(response, 400, msg.PASSWORD_MAX_LENGTH);
   });
 
   test('Login with valid credentials succeeds', async ({ loginResult }) => {
-    expect(loginResult.response.status()).toBe(200);
-
-    const loginBody = await loginResult.response.json();
-    expect(loginBody.message).toBe('Login successful');
+    await expectApiSuccess(loginResult.response, 200, msg.LOGIN_SUCCESS);
   });
 
   test('Login with wrong password is rejected', async ({
@@ -97,36 +78,24 @@ test.describe('Auth API', () => {
       'testingpass1',
     );
 
-    expect(loginResponse.status()).toBe(401);
-
-    const loginBody = await loginResponse.json();
-    expect(loginBody.error).toBe('Invalid credentials');
+    await expectApiError(loginResponse, 401, msg.INVALID_CREDENTIALS);
   });
 
   test('Login with non existing email is rejected', async ({ request }) => {
     const loginResponse = await loginUserApi(request, uniqueEmail());
 
-    expect(loginResponse.status()).toBe(401);
-
-    const loginBody = await loginResponse.json();
-    expect(loginBody.error).toBe('Invalid credentials');
+    await expectApiError(loginResponse, 401, msg.INVALID_CREDENTIALS);
   });
 
   test('Login with missing email is rejected', async ({ request }) => {
     const loginResponse = await loginUserApi(request, '');
 
-    expect(loginResponse.status()).toBe(400);
-
-    const loginBody = await loginResponse.json();
-    expect(loginBody.error).toBe('Email and password are required');
+    await expectApiError(loginResponse, 400, msg.EMAIL_PASSWORD_REQUIRED);
   });
 
   test('Login with missing password is rejected', async ({ request }) => {
     const loginResponse = await loginUserApi(request, uniqueEmail(), '');
 
-    expect(loginResponse.status()).toBe(400);
-
-    const loginBody = await loginResponse.json();
-    expect(loginBody.error).toBe('Email and password are required');
+    await expectApiError(loginResponse, 400, msg.EMAIL_PASSWORD_REQUIRED);
   });
 });

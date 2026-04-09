@@ -1,5 +1,6 @@
-import { API_URL, PASSWORD } from './constants';
+import { API_URL, PASSWORD, msg } from './constants';
 import { expect, APIRequestContext, APIResponse } from '@playwright/test';
+import { expectApiSuccess } from './response-helpers';
 import type { LoginResponse } from '../types/login';
 
 type AddBike = {
@@ -52,10 +53,7 @@ export async function registerUser(
     },
   });
 
-  expect(response.status()).toBe(201);
-
-  const body = await response.json();
-  expect(body.message).toBe('User registered successfully');
+  await expectApiSuccess(response, 201, msg.USER_REG_SUCCESS);
 }
 
 export async function loginUser(
@@ -70,10 +68,11 @@ export async function loginUser(
     },
   });
 
-  expect(response.status()).toBe(200);
-
-  const body = await response.json();
-  expect(body.message).toBe('Login successful');
+  const body = await expectApiSuccess<LoginResponse>(
+    response,
+    200,
+    msg.LOGIN_SUCCESS,
+  );
 
   return body as LoginResponse;
 }
@@ -112,11 +111,11 @@ export async function addBike(
     },
   });
 
-  expect(response.status()).toBe(201);
-
-  const body = await response.json();
-
-  expect(body.message).toBe('Bike created successfully');
+  const body = await expectApiSuccess<{ bike: { id: string } }>(
+    response,
+    201,
+    msg.BIKE_CREATE_SUCCESS,
+  );
 
   return body.bike.id;
 }
