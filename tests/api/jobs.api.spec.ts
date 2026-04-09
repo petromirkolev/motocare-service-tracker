@@ -1,4 +1,6 @@
 import { test, expect, uniqueEmail, addJobApi } from '../fixtures/api';
+import { msg } from '../utils/constants';
+import { expectApiError } from '../utils/response-helpers';
 import {
   registerUser,
   loginUser,
@@ -51,11 +53,7 @@ test.describe('Jobs API', () => {
         },
       );
 
-      expect(response.status()).toBe(400);
-
-      const body = await response.json();
-
-      expect(body.error).toBe('bike_id is required');
+      await expectApiError(response, 400, msg.BIKE_ID_REQUIRED);
     });
 
     test('Create job with missing service_type is rejected', async ({
@@ -70,11 +68,7 @@ test.describe('Jobs API', () => {
         { odometer: 24500, note: 'Change the oil' },
       );
 
-      expect(response.status()).toBe(400);
-
-      const body = await response.json();
-
-      expect(body.error).toBe('service_type is required');
+      await expectApiError(response, 400, msg.SERVICE_TYPE_REQUIRED);
     });
 
     test('Create job with missing odometer is rejected', async ({
@@ -89,11 +83,7 @@ test.describe('Jobs API', () => {
         { service_type: 'Oil change', note: 'Change the oil' },
       );
 
-      expect(response.status()).toBe(400);
-
-      const body = await response.json();
-
-      expect(body.error).toBe('odometer is required');
+      await expectApiError(response, 400, msg.ODOMETER_REQUIRED);
     });
 
     test('Create job with invalid negative odometer is rejected', async ({
@@ -112,11 +102,7 @@ test.describe('Jobs API', () => {
         },
       );
 
-      expect(response.status()).toBe(400);
-
-      const body = await response.json();
-
-      expect(body.error).toBe('odometer cannot be a negative integer');
+      await expectApiError(response, 400, msg.ODOMETER_NEGATIVE);
     });
 
     test('Create job with invalid string odometer is rejected', async ({
@@ -135,11 +121,7 @@ test.describe('Jobs API', () => {
         },
       );
 
-      expect(response.status()).toBe(400);
-
-      const body = await response.json();
-
-      expect(body.error).toBe('odometer must be a number');
+      await expectApiError(response, 400, msg.ODOMETER_MUST_BE_NUMBER);
     });
 
     test('Jobs list returns only current user jobs', async ({
@@ -244,11 +226,7 @@ test.describe('Jobs API', () => {
         'approved',
       );
 
-      expect(response.status()).toBe(403);
-
-      const resBody = await response.json();
-
-      expect(resBody.error).toBe('Forbidden');
+      await expectApiError(response, 403, msg.FORBIDDEN);
     });
   });
 
@@ -392,12 +370,10 @@ test.describe('Jobs API', () => {
         'done',
       );
 
-      expect(response.status()).toBe(400);
-
-      const body = await response.json();
-
-      expect(body.error).toBe(
-        'Invalid status transition from requested to done',
+      await expectApiError(
+        response,
+        400,
+        msg.INVALID_TRANSITION_REQUESTED_TO_DONE,
       );
     });
 
@@ -412,12 +388,10 @@ test.describe('Jobs API', () => {
         'in_progress',
       );
 
-      expect(response.status()).toBe(400);
-
-      const resBody = await response.json();
-
-      expect(resBody.error).toBe(
-        'Invalid status transition from requested to in_progress',
+      await expectApiError(
+        response,
+        400,
+        msg.INVALID_TRANSITION_REQUESTED_TO_IN_PROGRESS,
       );
     });
 
@@ -438,13 +412,7 @@ test.describe('Jobs API', () => {
         'done',
       );
 
-      expect(response.status()).toBe(400);
-
-      const resBody = await response.json();
-
-      expect(resBody.error).toBe(
-        'Invalid status transition from approved to done',
-      );
+      await expectApiError(response, 400, msg.INVALID_TRANSITION_APPROVED_TO_DONE);
     });
 
     test('Done > Approved job transition is rejected', async ({
@@ -479,13 +447,7 @@ test.describe('Jobs API', () => {
         'approved',
       );
 
-      expect(response.status()).toBe(400);
-
-      const resBody = await response.json();
-
-      expect(resBody.error).toBe(
-        'Invalid status transition from done to approved',
-      );
+      await expectApiError(response, 400, msg.INVALID_TRANSITION_DONE_TO_APPROVED);
     });
 
     test('Cancelled > Approved job transition is rejected', async ({
@@ -506,12 +468,10 @@ test.describe('Jobs API', () => {
         'approved',
       );
 
-      expect(response.status()).toBe(400);
-
-      const resBody = await response.json();
-
-      expect(resBody.error).toBe(
-        'Invalid status transition from cancelled to approved',
+      await expectApiError(
+        response,
+        400,
+        msg.INVALID_TRANSITION_CANCELLED_TO_APPROVED,
       );
     });
   });

@@ -5,6 +5,8 @@ import {
   addBikeApi,
   addJobApi,
 } from '../fixtures/api';
+import { msg } from '../utils/constants';
+import { expectApiError, expectApiSuccess } from '../utils/response-helpers';
 import {
   registerUser,
   loginUser,
@@ -26,11 +28,7 @@ test.describe('Garage API', () => {
       validBikeData,
     );
 
-    expect(response.status()).toBe(201);
-
-    const body = await response.json();
-
-    expect(body.message).toBe('Bike created successfully');
+    await expectApiSuccess(response, 201, msg.BIKE_CREATE_SUCCESS);
   });
 
   test('Create bike with missing make is rejected', async ({
@@ -42,11 +40,7 @@ test.describe('Garage API', () => {
       year: 2020,
     });
 
-    expect(response.status()).toBe(400);
-
-    const body = await response.json();
-
-    expect(body.error).toBe('Make is required');
+    await expectApiError(response, 400, msg.MAKE_REQUIRED);
   });
 
   test('Create bike with missing model is rejected', async ({
@@ -58,11 +52,7 @@ test.describe('Garage API', () => {
       year: 2020,
     });
 
-    expect(response.status()).toBe(400);
-
-    const body = await response.json();
-
-    expect(body.error).toBe('Model is required');
+    await expectApiError(response, 400, msg.MODEL_REQUIRED);
   });
 
   test('Create bike with missing year is rejected', async ({
@@ -74,11 +64,7 @@ test.describe('Garage API', () => {
       model: 'Tracer 9GT',
     });
 
-    expect(response.status()).toBe(400);
-
-    const body = await response.json();
-
-    expect(body.error).toBe('Year is required');
+    await expectApiError(response, 400, msg.YEAR_REQUIRED);
   });
 
   test('Create bike with invalid year < 1900 is rejected', async ({
@@ -91,11 +77,7 @@ test.describe('Garage API', () => {
       year: 1899,
     });
 
-    expect(response.status()).toBe(400);
-
-    const body = await response.json();
-
-    expect(body.error).toBe('Year must be an integer between 1900 and 2100');
+    await expectApiError(response, 400, msg.YEAR_OUT_OF_RANGE);
   });
 
   test('Create bike with invalid year > 2100 is rejected', async ({
@@ -108,11 +90,7 @@ test.describe('Garage API', () => {
       year: 2101,
     });
 
-    expect(response.status()).toBe(400);
-
-    const body = await response.json();
-
-    expect(body.error).toBe('Year must be an integer between 1900 and 2100');
+    await expectApiError(response, 400, msg.YEAR_OUT_OF_RANGE);
   });
 
   test('Bikes list returns only current user bikes', async ({
@@ -159,10 +137,7 @@ test.describe('Garage API', () => {
       loginResult.body.user.id,
     );
 
-    expect(deleteResponse.status()).toBe(200);
-
-    const deleteBody = await deleteResponse.json();
-    expect(deleteBody.message).toBe('Bike deleted successfully');
+    await expectApiSuccess(deleteResponse, 200, msg.BIKE_DELETE_SUCCESS);
 
     const bikes = await listBikesApi(request, loginResult.body.user.id);
     expect(bikes).toHaveLength(0);
@@ -181,10 +156,7 @@ test.describe('Garage API', () => {
       bike_id,
       loginResult.body.user.id,
     );
-    expect(deleteResponse.status()).toBe(200);
-
-    const deleteBody = await deleteResponse.json();
-    expect(deleteBody.message).toBe('Bike deleted successfully');
+    await expectApiSuccess(deleteResponse, 200, msg.BIKE_DELETE_SUCCESS);
 
     const jobsResponse = await listJobsApi(request, loginResult.body.user.id);
 
