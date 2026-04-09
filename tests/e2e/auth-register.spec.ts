@@ -1,6 +1,6 @@
 import { test } from '../fixtures/auth';
 
-test.describe('Register page', () => {
+test.describe('MST - Register E2E', () => {
   test.beforeEach(async ({ registerPage }) => {
     await registerPage.gotoreg();
   });

@@ -16,8 +16,8 @@ import {
   listJobsApi,
 } from '../utils/api-helpers';
 
-test.describe('Garage API', () => {
-  test('Create bike with valid data succeeds', async ({
+test.describe('MST - Garage API', () => {
+  test('Create bike with valid data returns 201', async ({
     request,
     loginResult,
     validBikeData,
@@ -31,7 +31,7 @@ test.describe('Garage API', () => {
     await expectApiSuccess(response, 201, msg.BIKE_CREATE_SUCCESS);
   });
 
-  test('Create bike with missing make is rejected', async ({
+  test('Create bike with missing make returns 400', async ({
     loginResult,
     request,
   }) => {
@@ -43,7 +43,7 @@ test.describe('Garage API', () => {
     await expectApiError(response, 400, msg.MAKE_REQUIRED);
   });
 
-  test('Create bike with missing model is rejected', async ({
+  test('Create bike with missing model returns 400', async ({
     request,
     loginResult,
   }) => {
@@ -55,7 +55,7 @@ test.describe('Garage API', () => {
     await expectApiError(response, 400, msg.MODEL_REQUIRED);
   });
 
-  test('Create bike with missing year is rejected', async ({
+  test('Create bike with missing year returns 400', async ({
     request,
     loginResult,
   }) => {
@@ -67,7 +67,7 @@ test.describe('Garage API', () => {
     await expectApiError(response, 400, msg.YEAR_REQUIRED);
   });
 
-  test('Create bike with invalid year < 1900 is rejected', async ({
+  test('Create bike with invalid year < 1900 returns 400', async ({
     request,
     loginResult,
   }) => {
@@ -80,7 +80,7 @@ test.describe('Garage API', () => {
     await expectApiError(response, 400, msg.YEAR_OUT_OF_RANGE);
   });
 
-  test('Create bike with invalid year > 2100 is rejected', async ({
+  test('Create bike with invalid year > 2100 returns 400', async ({
     request,
     loginResult,
   }) => {

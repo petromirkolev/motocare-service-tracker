@@ -1,6 +1,6 @@
 import { test, expect } from '../fixtures/jobs';
 
-test.describe('Jobs', () => {
+test.describe('MST - Jobs E2E', () => {
   test.describe('Job creation and validation', () => {
     test.beforeEach(async ({ garageWithOneBike, jobsPage }) => {
       await jobsPage.gotoJobsPage();

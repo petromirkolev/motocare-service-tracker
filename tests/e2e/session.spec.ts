@@ -1,6 +1,6 @@
 import { test, expect } from '../fixtures/bikes';
 
-test.describe('Session', () => {
+test.describe('MST - Session E2E', () => {
   test('Logged-in user stays logged in after refresh', async ({
     loggedInUser,
     bikesPage,

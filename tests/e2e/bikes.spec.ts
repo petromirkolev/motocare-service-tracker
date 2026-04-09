@@ -1,7 +1,7 @@
 import { test, expect } from '../fixtures/bikes';
 import { uniqueEmail, validInput } from '../utils/test-data';
 
-test.describe('Bikes', () => {
+test.describe('MST - Bikes E2E', () => {
   test('User can add bike successfully', async ({
     loggedInUser,
     seededBike,

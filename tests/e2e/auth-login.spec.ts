@@ -1,6 +1,6 @@
 import { test, expect, validInput } from '../fixtures/auth';
 
-test.describe('Login', () => {
+test.describe('MST - Login E2E', () => {
   test.beforeEach(async ({ loginPage }) => {
     await loginPage.goto();
   });

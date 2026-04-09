@@ -9,7 +9,7 @@ import {
   updateJobApi,
 } from '../utils/api-helpers';
 
-test.describe('Jobs API', () => {
+test.describe('MST - Jobs API', () => {
   test.describe('Create/list bike jobs', () => {
     test('Create job with valid data succeeds', async ({
       request,
@@ -38,7 +38,7 @@ test.describe('Jobs API', () => {
       expect(body.jobs.every((job) => job.status === 'requested')).toBeTruthy();
     });
 
-    test('Create job with missing bike_id is rejected', async ({
+    test('Create job with missing bike_id returns 400', async ({
       request,
       loginResult,
     }) => {
@@ -56,7 +56,7 @@ test.describe('Jobs API', () => {
       await expectApiError(response, 400, msg.BIKE_ID_REQUIRED);
     });
 
-    test('Create job with missing service_type is rejected', async ({
+    test('Create job with missing service_type returns 400', async ({
       request,
       loginResult,
       garageWithBike,
@@ -71,7 +71,7 @@ test.describe('Jobs API', () => {
       await expectApiError(response, 400, msg.SERVICE_TYPE_REQUIRED);
     });
 
-    test('Create job with missing odometer is rejected', async ({
+    test('Create job with missing odometer returns 400', async ({
       request,
       loginResult,
       garageWithBike,
@@ -86,7 +86,7 @@ test.describe('Jobs API', () => {
       await expectApiError(response, 400, msg.ODOMETER_REQUIRED);
     });
 
-    test('Create job with invalid negative odometer is rejected', async ({
+    test('Create job with invalid negative odometer returns 400', async ({
       request,
       loginResult,
       garageWithBike,
@@ -105,7 +105,7 @@ test.describe('Jobs API', () => {
       await expectApiError(response, 400, msg.ODOMETER_NEGATIVE);
     });
 
-    test('Create job with invalid string odometer is rejected', async ({
+    test('Create job with invalid string odometer returns 400', async ({
       request,
       loginResult,
       garageWithBike,
@@ -187,7 +187,7 @@ test.describe('Jobs API', () => {
       ).toBeTruthy();
     });
 
-    test('Update non-existing job is rejected', async ({
+    test('Update non-existing job returns 404', async ({
       request,
       loginResult,
     }) => {
@@ -201,7 +201,7 @@ test.describe('Jobs API', () => {
       expect(response.status()).toBe(404);
     });
 
-    test('Update other user job is rejected', async ({
+    test('Update other user job returns 403', async ({
       request,
       loginResult,
       garageWithBike,
@@ -359,7 +359,7 @@ test.describe('Jobs API', () => {
   });
 
   test.describe('Invalid job status transitions', () => {
-    test('Requested > Done job transition is rejected', async ({
+    test('Requested > Done job transition returns 400', async ({
       request,
       bikeWithOneJob,
     }) => {
@@ -377,7 +377,7 @@ test.describe('Jobs API', () => {
       );
     });
 
-    test('Requested > In progress job transition is rejected', async ({
+    test('Requested > In progress job transition returns 400', async ({
       request,
       bikeWithOneJob,
     }) => {
@@ -395,7 +395,7 @@ test.describe('Jobs API', () => {
       );
     });
 
-    test('Approved > Done job transition is rejected', async ({
+    test('Approved > Done job transition returns 400', async ({
       request,
       bikeWithOneJob,
     }) => {
@@ -412,10 +412,14 @@ test.describe('Jobs API', () => {
         'done',
       );
 
-      await expectApiError(response, 400, msg.INVALID_TRANSITION_APPROVED_TO_DONE);
+      await expectApiError(
+        response,
+        400,
+        msg.INVALID_TRANSITION_APPROVED_TO_DONE,
+      );
     });
 
-    test('Done > Approved job transition is rejected', async ({
+    test('Done > Approved job transition returns 400', async ({
       request,
       bikeWithOneJob,
     }) => {
@@ -447,10 +451,14 @@ test.describe('Jobs API', () => {
         'approved',
       );
 
-      await expectApiError(response, 400, msg.INVALID_TRANSITION_DONE_TO_APPROVED);
+      await expectApiError(
+        response,
+        400,
+        msg.INVALID_TRANSITION_DONE_TO_APPROVED,
+      );
     });
 
-    test('Cancelled > Approved job transition is rejected', async ({
+    test('Cancelled > Approved job transition returns 400', async ({
       request,
       bikeWithOneJob,
     }) => {
